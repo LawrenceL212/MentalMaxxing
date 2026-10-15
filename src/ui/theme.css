@@ -1,0 +1,35 @@
+@import 'tailwindcss';
+
+/* Arctic is the default. Missions and ratings keep fixed colours across themes. */
+:root {
+  color-scheme: dark;
+  --bg: #0a0f16; --raise: #162231; --raise2: #21324a; --line: #2c4058;
+  --text: #ffffff; --muted: #d3e3f3; --accent: #7cc4ff; --ink: #0b0d12;
+  --m-queue: #39d7ff; --m-dump: #ff8a3d; --m-shuffle: #b38bff; --m-prove: #ffd43b; --m-paper: #ff5c8a;
+  --r-again: #ff5c6c; --r-hard: #ffb13b; --r-good: #3ddc84; --r-easy: #39d7ff;
+  --f-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+  --f-body: 'Atkinson Hyperlegible', ui-sans-serif, system-ui, sans-serif;
+  --f-mono: 'Geist Mono', ui-monospace, Menlo, monospace;
+}
+[data-theme='molten'] { --bg: #110d09; --raise: #251c13; --raise2: #35291c; --line: #4a3a27; --muted: #f1e2c6; --accent: #ffbe55; }
+[data-theme='obsidian'] { --bg: #060a09; --raise: #122019; --raise2: #1b3026; --line: #28453a; --muted: #cdf0e2; --accent: #46e8a8; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+h1, h2, h3 { font-family: var(--f-display); }
+.mono { font-family: var(--f-mono); }
+
+button { font: inherit; cursor: pointer; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
