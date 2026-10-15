@@ -1,5 +1,6 @@
 # src/lib/ logic and services (no JSX except hooks)
 - `missions.ts` `todayPlan(state)`, `pickMission`, `dueCards`, `allCards`, `daysUntilExam`. The only place that decides what to study.
+- `detect.ts` `detectTopics(text)` matches pasted text to spec topics using each topic's heading and notes vocabulary (needs 2+ distinctive words); `spreadDates`. Used by Study "Where are you in class?", organiser auto-mark, and auto-tagging new cards. Tested. No AI.
 - `curriculum.ts` school order (`schoolOrder`), `focusTopic` (foggiest taught topic), `topicToLearn`. Tested.
 - `organiser.ts` turns pasted "term: definition" lines into cards (stable ids). `files.ts` IndexedDB storage for organiser files (device only).
 - `fog.ts` recall model: `recall`, `fog`, `fogByTopic` (uses self-rating before reviews), `forecast`. Tested.

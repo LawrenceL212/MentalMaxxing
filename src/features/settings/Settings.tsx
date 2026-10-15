@@ -3,6 +3,7 @@ import { SUBJECTS, subjectById } from '../../content/subjects'
 import { actions, useAppState } from '../../lib/store'
 import { useAuth } from '../../lib/firebase/sync'
 import { sfx } from '../../lib/fx/sound'
+import { detectTopics } from '../../lib/detect'
 
 export default function Settings() {
   const state = useAppState()
@@ -61,9 +62,9 @@ export default function Settings() {
 
       <section className="surface content-start grid gap-2 p-4">
         <h2 className="label">My cards ({state.userCards.length})</h2>
-        <form className="grid gap-2" onSubmit={(e) => { e.preventDefault(); actions.addCard({ subjectId, topic: cTopic.trim() || 'My cards', front: cFront.trim(), back: cBack.trim() }); setCFront(''); setCBack(''); sfx('select') }}>
+        <form className="grid gap-2" onSubmit={(e) => { e.preventDefault(); actions.addCard({ subjectId, topic: cTopic.trim() || detectTopics(`${cFront} ${cBack}`, { subjectIds: [subjectId], limit: 1 })[0]?.topic || 'My cards', front: cFront.trim(), back: cBack.trim() }); setCFront(''); setCBack(''); sfx('select') }}>
           <p className="text-sm text-[var(--muted)]">Adds to the subject chosen under Revision resources ({subject?.name}).</p>
-          <input className="field" placeholder="Topic (optional)" value={cTopic} onChange={(e) => setCTopic(e.target.value)} />
+          <input className="field" placeholder="Topic (optional, the app works it out)" value={cTopic} onChange={(e) => setCTopic(e.target.value)} />
           <input className="field" required placeholder="Question" value={cFront} onChange={(e) => setCFront(e.target.value)} />
           <textarea className="field" required rows={2} placeholder="Answer" value={cBack} onChange={(e) => setCBack(e.target.value)} />
           <button type="submit" className="btn btn-primary">Add card</button>
