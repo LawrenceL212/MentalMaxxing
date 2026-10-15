@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from 'react'
 import { INITIAL_SRS, type Grade, type SrsState, review } from '../srs/sm2'
 import type { Resource } from '../../content/subjects'
+import { TOPICS } from '../../content/topics'
 
 export type MissionKind = 'queue' | 'learn' | 'dump' | 'prove' | 'paper'
 
@@ -54,6 +55,8 @@ export interface AppState {
   topicKnow: Record<string, 1 | 2 | 3>
   /** `${subjectId}:${topic}` -> epoch ms the student marked it as taught in class. Gives school teaching order. */
   taught: Record<string, number>
+  /** subjectId -> topics in the order the school teaches them (student-arranged; missing means spec order) */
+  topicOrder: Record<string, string[]>
   /** `${subjectId}:${topic}` -> the school knowledge organiser: pasted text and/or a link (files are kept on the device). */
   organisers: Record<string, { text: string; link: string; fileName?: string }>
   /** Sound effects and haptics */
@@ -80,6 +83,7 @@ export const DEFAULT_STATE: AppState = {
   soundOn: true,
   topicKnow: {},
   taught: {},
+  topicOrder: {},
   organisers: {},
   missionLog: [],
   updatedAt: 0,
@@ -108,6 +112,13 @@ function set(next: AppState, stamp = true) {
   listeners.forEach((l) => l())
 }
 
+/** The subject's topics in school teaching order: the student's saved order, with any new spec topics appended and removed ones dropped. */
+export function orderedTopics(s: Pick<AppState, 'topicOrder'>, subjectId: string): string[] {
+  const all = TOPICS[subjectId] ?? []
+  const saved = (s.topicOrder[subjectId] ?? []).filter((t) => all.includes(t))
+  return [...saved, ...all.filter((t) => !saved.includes(t))]
+}
+
 export const getState = () => state
 export const subscribe = (l: () => void) => {
   listeners.add(l)
@@ -125,6 +136,21 @@ export const actions = {
     const taught = { ...state.taught }
     if (on) taught[key] = at
     else delete taught[key]
+    set({ ...state, taught })
+  },
+  /** Saves the full school-order list for a subject. */
+  setTopicOrder: (subjectId: string, order: string[]) => set({ ...state, topicOrder: { ...state.topicOrder, [subjectId]: order } }),
+  /** Marks every topic up to and including `topic` (in the current list order) as taught; later ones are unmarked. */
+  coveredUpTo: (subjectId: string, topic: string, now = Date.now()) => {
+    const list = orderedTopics(state, subjectId)
+    const idx = list.indexOf(topic)
+    if (idx < 0) return
+    const taught = { ...state.taught }
+    list.forEach((t, i) => {
+      const k = `${subjectId}:${t}`
+      if (i <= idx) taught[k] = taught[k] ?? now - (idx - i) * 86_400_000
+      else delete taught[k]
+    })
     set({ ...state, taught })
   },
   setOrganiser: (key: string, patch: Partial<AppState['organisers'][string]>) =>

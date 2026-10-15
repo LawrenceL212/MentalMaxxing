@@ -5,7 +5,7 @@ import { NOTES } from '../../content/notes'
 import { decksFor, type Deck } from '../../lib/flashcards'
 import { subjectById } from '../../content/subjects'
 import { sfx } from '../../lib/fx/sound'
-import { schoolOrder, topicId } from '../../lib/curriculum'
+import { orderedTopics, topicId } from '../../lib/curriculum'
 import { organiserCardId, parseOrganiser } from '../../lib/organiser'
 import { detectTopics, spreadDates, type TopicMatch } from '../../lib/detect'
 import { deleteFile, getFile, MAX_FILE_BYTES, putFile } from '../../lib/files'
@@ -277,6 +277,56 @@ function FindMyPlace() {
   )
 }
 
+/** The whole course in school order: reorder with the arrows, set "we're up to here" to mark everything before it as covered. */
+function CourseList({ decks, subjectId, onOpen }: { decks: Deck[]; subjectId: string; onOpen: (d: Deck) => void }) {
+  const state = useAppState()
+  const subject = subjectById(subjectId)
+  const names = decks.map((d) => d.topic)
+  const isCovered = (topic: string) => Boolean(state.taught[topicId(subjectId, topic)])
+  const last = names.reduce((acc, t, i) => (isCovered(t) ? i : acc), -1)
+
+  function move(i: number, by: -1 | 1) {
+    const j = i + by
+    if (j < 0 || j >= names.length) return
+    const next = [...names]
+    ;[next[i], next[j]] = [next[j], next[i]]
+    sfx('tap')
+    actions.setTopicOrder(subjectId, next)
+  }
+
+  return (
+    <ol className="grid gap-2" aria-label="Course in school order">
+      {decks.map((d, i) => {
+        const key = topicId(subjectId, d.topic)
+        const k = KNOW.find((x) => x.level === state.topicKnow[key])
+        const done = isCovered(d.topic)
+        return (
+          <li key={d.topic} className="grid gap-2">
+            <div className={`surface flex flex-wrap items-center gap-2 p-2 ${done ? '' : 'opacity-90'}`} style={{ borderLeft: `6px solid ${subject?.color}` }}>
+              <span className="mono grid size-7 shrink-0 place-items-center rounded-md text-xs font-bold text-[var(--ink)]" style={{ background: done ? subject?.color : 'var(--raise2)', color: done ? undefined : 'var(--text)' }} aria-hidden>{done ? '✓' : i + 1}</span>
+              <button type="button" onClick={() => { sfx('select'); onOpen(d) }} className="press min-w-0 flex-1 basis-40 text-left font-bold">
+                {done && <span className="mono block text-[11px]">{i + 1} · covered</span>}
+                {d.topic}
+              </button>
+              {k && <span className="mono rounded-full px-2 py-0.5 text-[11px] font-bold text-[var(--ink)]" style={{ background: k.color }}>{k.label}</span>}
+              <button type="button" className="chip press" aria-pressed={i === last} onClick={() => { sfx('complete'); actions.coveredUpTo(subjectId, d.topic) }}>We're up to here</button>
+              <button type="button" className="chip press" aria-label={`Move ${d.topic} earlier`} disabled={i === 0} onClick={() => move(i, -1)}>↑</button>
+              <button type="button" className="chip press" aria-label={`Move ${d.topic} later`} disabled={i === decks.length - 1} onClick={() => move(i, 1)}>↓</button>
+            </div>
+            {i === last && (
+              <div className="flex items-center gap-2" role="separator" aria-label="You are here">
+                <span className="h-1 flex-1 rounded-full" style={{ background: subject?.color }} />
+                <span className="mono text-xs font-bold">You are here</span>
+                <span className="h-1 flex-1 rounded-full" style={{ background: subject?.color }} />
+              </div>
+            )}
+          </li>
+        )
+      })}
+    </ol>
+  )
+}
+
 function TopicList({ decks, subjectId, onOpen, numbered }: { decks: Deck[]; subjectId: string; onOpen: (d: Deck) => void; numbered?: boolean }) {
   const state = useAppState()
   const subject = subjectById(subjectId)
@@ -320,9 +370,10 @@ export default function Study() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ps, pt])
 
-  const order = schoolOrder(state, subjectId)
-  const taughtDecks = order.taught.map((t) => decks.find((d) => d.topic === t)).filter((d): d is Deck => Boolean(d))
-  const otherDecks = decks.filter((d) => !order.taught.includes(d.topic))
+  const listed = orderedTopics(state, subjectId)
+  const courseDecks = listed.map((t) => decks.find((d) => d.topic === t)).filter((d): d is Deck => Boolean(d))
+  const ownDecks = decks.filter((d) => !listed.includes(d.topic))
+  const covered = courseDecks.filter((d) => state.taught[topicId(subjectId, d.topic)]).length
 
   if (open) return <TopicPage subjectId={subjectId} deck={open} onClose={() => setOpen(null)} onSwitch={(d) => setOpen(d)} />
 
@@ -350,16 +401,15 @@ export default function Study() {
         <p className="surface p-5">No topics listed for {subject?.name} yet. Add your own cards in Settings and they will appear here.</p>
       ) : (
         <>
-          {taughtDecks.length > 0 && (
+          <p className="mono text-xs font-bold">{covered} of {courseDecks.length} topics covered in class</p>
+          <p className="text-sm">This is your course in the order your school teaches it. Use the arrows to match your class, and press "We're up to here" on the topic you are on now.</p>
+          <CourseList decks={courseDecks} subjectId={subjectId} onOpen={setOpen} />
+          {ownDecks.length > 0 && (
             <>
-              <h2 className="label">In class so far, in the order you were taught</h2>
-              <TopicList decks={taughtDecks} subjectId={subjectId} onOpen={setOpen} numbered />
+              <h2 className="label">Your own topics</h2>
+              <TopicList decks={ownDecks} subjectId={subjectId} onOpen={setOpen} />
             </>
           )}
-          <p className="mono text-xs font-bold">{taughtDecks.length} of {decks.length} topics covered in class</p>
-          <h2 className="label">{taughtDecks.length ? 'Coming up' : 'All topics'}</h2>
-          {taughtDecks.length === 0 && <p className="text-sm">Open a topic and tick "We have covered this" as your class gets to it. The app then revises those first, in your school order.</p>}
-          <TopicList decks={otherDecks} subjectId={subjectId} onOpen={setOpen} />
         </>
       )}
     </div>
