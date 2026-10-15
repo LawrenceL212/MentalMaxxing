@@ -10,10 +10,15 @@ import { fog, forecast } from '../../lib/fog'
 
 export const KIND: Record<MissionKind, { color: string; icon: IconName; route: string }> = {
   queue: { color: 'var(--m-queue)', icon: 'cards', route: '/session' },
+  learn: { color: 'var(--m-shuffle)', icon: 'brain', route: '/study' },
   dump: { color: 'var(--m-dump)', icon: 'pen', route: '/run/dump' },
   prove: { color: 'var(--m-prove)', icon: 'timer', route: '/run/prove' },
   paper: { color: 'var(--m-paper)', icon: 'target', route: '/mock' },
 }
+
+/** Where a plan item goes. Learn opens that topic on the Study tab. */
+export const routeFor = (item: PlanItem) =>
+  item.kind === 'learn' && item.subject && item.topic ? `/study?s=${item.subject.id}&t=${encodeURIComponent(item.topic)}` : KIND[item.kind].route
 
 const greeting = () => {
   const h = new Date().getHours()
@@ -36,9 +41,9 @@ function Hero({ item }: { item: PlanItem }) {
         <span className="mono rounded-full bg-black/15 px-3 py-1 text-[11px] font-bold">{item.minutes} min</span>
       </div>
       <h1 className="mt-4 text-5xl leading-[0.95] font-extrabold tracking-tight md:text-6xl">{item.title}</h1>
-      {item.subject && <p className="mt-2 flex items-center gap-2 text-lg font-bold"><span className="size-3 rounded-full bg-[var(--ink)]" />{item.subject.name}</p>}
+      {item.subject && <p className="mt-2 flex items-center gap-2 text-lg font-bold"><span className="size-3 shrink-0 rounded-full bg-[var(--ink)]" />{item.subject.name}{item.topic ? ` · ${item.topic}` : ''}</p>}
       <p className="mt-4 rounded-2xl bg-white/30 p-3.5 leading-snug">{item.why}</p>
-      <Link to={k.route} onClick={() => sfx('select')} className="btn btn-dark mt-4 w-full py-4 text-lg">
+      <Link to={routeFor(item)} onClick={() => sfx('select')} className="btn btn-dark mt-4 w-full py-4 text-lg">
         Start mission <Icon name="arrow" size={20} />
       </Link>
     </section>
@@ -120,14 +125,14 @@ export default function Home() {
               const k = KIND[item.kind]
               return (
                 <li key={item.kind}>
-                  <Link to={item.done ? '#' : k.route} onClick={(e) => { if (item.done) e.preventDefault(); else sfx('tap') }}
+                  <Link to={item.done ? '#' : routeFor(item)} onClick={(e) => { if (item.done) e.preventDefault(); else sfx('tap') }}
                     className="press grid grid-cols-[40px_1fr_auto] items-center gap-3 rounded-2xl bg-[var(--raise2)] p-2.5">
                     <span className="grid size-10 place-items-center rounded-xl text-[var(--ink)]" style={{ background: item.done ? 'var(--r-good)' : k.color }}>
                       <Icon name={item.done ? 'check' : k.icon} size={20} />
                     </span>
                     <span className={item.done ? 'opacity-70' : ''}>
                       <b className={`block leading-tight ${item.done ? 'line-through' : ''}`}>{item.title}</b>
-                      <span className="text-sm text-[var(--muted)]">{item.subject?.name ?? 'All subjects'}</span>
+                      <span className="text-sm text-[var(--muted)]">{item.topic ?? item.subject?.name ?? 'All subjects'}</span>
                     </span>
                     <span className="mono text-xs font-bold">{item.done ? 'Done' : `${item.minutes}m`}</span>
                   </Link>

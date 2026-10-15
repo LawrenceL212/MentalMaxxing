@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { actions, useAppState } from '../../lib/store'
 import { NOTES } from '../../content/notes'
 import { decksFor, type Deck } from '../../lib/flashcards'
 import { subjectById } from '../../content/subjects'
 import { sfx } from '../../lib/fx/sound'
+import { schoolOrder, topicId } from '../../lib/curriculum'
+import { organiserCardId, parseOrganiser } from '../../lib/organiser'
+import { deleteFile, getFile, MAX_FILE_BYTES, putFile } from '../../lib/files'
 import Icon from '../../ui/Icon'
 
 const shuffle = <T,>(a: T[]) => [...a].sort(() => Math.random() - 0.5)
@@ -65,13 +69,54 @@ const KNOW = [
 ]
 
 /** Learn a topic: read the key points, then say how well you know it. That feeds the fog map before any reviews exist. */
-function TopicPage({ subjectId, deck, onClose }: { subjectId: string; deck: Deck; onClose: () => void }) {
+function TopicPage({ subjectId, deck: opened, onClose }: { subjectId: string; deck: Deck; onClose: () => void }) {
   const state = useAppState()
+  // Re-read the deck so cards made from the organiser show up straight away.
+  const deck = decksFor(state, subjectId).find((d) => d.topic === opened.topic) ?? opened
   const subject = subjectById(subjectId)
   const color = subject?.color ?? 'var(--accent)'
   const key = `${subjectId}:${deck.topic}`
   const notes = NOTES[deck.topic] ?? []
   const [flipping, setFlipping] = useState(false)
+  const [msg, setMsg] = useState('')
+  const [fileUrl, setFileUrl] = useState('')
+  const org = state.organisers[key] ?? { text: '', link: '' }
+  const taughtAt = state.taught[key]
+  const topicKey = /^\d/.test(deck.topic) ? deck.topic.split(' ')[0] : deck.topic.trim().toLowerCase()
+  const parsed = parseOrganiser(org.text)
+
+  useEffect(() => {
+    let url = ''
+    let live = true
+    if (org.fileName) void getFile(key).then((f) => { if (f && live) { url = URL.createObjectURL(f); setFileUrl(url) } }).catch(() => undefined)
+    else setFileUrl('')
+    return () => { live = false; if (url) URL.revokeObjectURL(url) }
+  }, [key, org.fileName])
+
+  async function onFile(f: File | undefined) {
+    if (!f) return
+    if (f.size > MAX_FILE_BYTES) return setMsg('That file is over 15 MB. Try a smaller PDF or a photo.')
+    try {
+      await putFile(key, f)
+      actions.setOrganiser(key, { fileName: f.name })
+      setMsg('Saved on this device.')
+    } catch {
+      setMsg('Could not save the file here. Paste the text or a link instead.')
+    }
+  }
+
+  function makeCards() {
+    const n = actions.addCards(parsed.map((p) => ({ id: organiserCardId(subjectId, topicKey, p.front), subjectId, topic: deck.topic, front: p.front, back: p.back })))
+    sfx('complete')
+    setMsg(n ? `Made ${n} flashcard${n === 1 ? '' : 's'}. They join your Queue and this topic's deck.` : 'Those cards already exist.')
+  }
+
+  function rate(level: 1 | 2 | 3) {
+    sfx('select')
+    actions.setTopicKnow(key, level)
+    const done = state.missionLog.some((m) => m.kind === 'learn' && m.detail === deck.topic && Date.now() - m.at < 86_400_000)
+    if (!done) actions.logMission({ kind: 'learn', subjectId, detail: deck.topic })
+  }
   const links = [...(subject?.resources ?? []), ...(state.customResources[subjectId] ?? [])]
 
   return (
@@ -104,11 +149,23 @@ function TopicPage({ subjectId, deck, onClose }: { subjectId: string; deck: Deck
             <div className="grid grid-cols-3 gap-2" role="group" aria-label="How well do you know this topic?">
               {KNOW.map((k) => (
                 <button key={k.level} type="button" aria-pressed={state.topicKnow[key] === k.level}
-                  onClick={() => { sfx('select'); actions.setTopicKnow(key, k.level) }}
+                  onClick={() => rate(k.level)}
                   className="press rounded-xl py-3 text-sm font-extrabold" style={state.topicKnow[key] === k.level ? { background: k.color, color: 'var(--ink)' } : { background: 'var(--raise2)' }}>{k.label}</button>
               ))}
             </div>
             <p className="text-sm">Be honest. This colours your fog map until you have reviewed cards.</p>
+          </section>
+
+          <section className="surface rise grid content-start gap-2 p-4" style={{ ['--i' as string]: 2 }}>
+            <h2 className="label">In class</h2>
+            <label className="flex items-center gap-3 font-bold">
+              <input type="checkbox" className="size-5" checked={Boolean(taughtAt)} onChange={(e) => { sfx('tap'); actions.setTaught(key, e.target.checked) }} />
+              We have covered this
+            </label>
+            {taughtAt && <label className="grid gap-1 text-sm font-bold">Taught on
+              <input type="date" className="field" value={new Date(taughtAt).toLocaleDateString('en-CA')} onChange={(e) => e.target.value && actions.setTaught(key, true, new Date(`${e.target.value}T12:00:00`).getTime())} />
+            </label>}
+            <p className="text-sm">The app revises what your class has covered first, in the order you were taught it.</p>
           </section>
 
           <section className="surface rise grid content-start gap-2 p-4" style={{ ['--i' as string]: 2 }}>
@@ -122,8 +179,58 @@ function TopicPage({ subjectId, deck, onClose }: { subjectId: string; deck: Deck
           </section>
         </div>
       </div>
+      <section className="surface rise grid content-start gap-3 p-5">
+        <h2 className="label">My knowledge organiser</h2>
+        <p className="text-sm">Add the one your teacher gave you. Paste the text, add a link, or upload a photo or PDF (kept on this device). Put each fact on its own line like <b>Mitochondria: where aerobic respiration happens</b> and the app turns them into flashcards.</p>
+        <textarea className="field min-h-32" aria-label="Knowledge organiser text" placeholder={'Term: definition\nTerm: definition'} value={org.text} onChange={(e) => actions.setOrganiser(key, { text: e.target.value })} />
+        <div className="grid gap-2 md:grid-cols-2">
+          <input className="field" aria-label="Organiser link" inputMode="url" placeholder="Link (Google Drive, school site)" value={org.link} onChange={(e) => actions.setOrganiser(key, { link: e.target.value })} />
+          <label className="btn btn-ghost cursor-pointer">
+            <Icon name="plus" size={18} />{org.fileName ? 'Replace file' : 'Upload photo or PDF'}
+            <input type="file" accept="image/*,application/pdf" className="sr-only" onChange={(e) => void onFile(e.target.files?.[0])} />
+          </label>
+        </div>
+        {org.link && /^https?:\/\//.test(org.link) && <a href={org.link} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 font-bold underline"><Icon name="link" size={16} />Open linked organiser</a>}
+        {org.fileName && (
+          <div className="grid gap-2">
+            <div className="flex items-center justify-between gap-2 rounded-xl bg-[var(--raise2)] p-3 text-sm font-bold">
+              <span className="truncate">{org.fileName}</span>
+              <span className="flex shrink-0 gap-2">
+                {fileUrl && <a href={fileUrl} target="_blank" rel="noreferrer" className="underline">Open</a>}
+                <button type="button" className="underline" onClick={() => { void deleteFile(key); actions.setOrganiser(key, { fileName: undefined }); setMsg('File removed.') }}>Remove</button>
+              </span>
+            </div>
+            {fileUrl && /\.(png|jpe?g|webp|gif)$/i.test(org.fileName) && <img src={fileUrl} alt="Your knowledge organiser" className="max-h-96 w-full rounded-xl object-contain" />}
+          </div>
+        )}
+        <button type="button" className="btn btn-primary" disabled={!parsed.length} onClick={makeCards}>{parsed.length ? `Make ${parsed.length} flashcard${parsed.length === 1 ? '' : 's'} from this` : 'Paste lines like term: definition to make flashcards'}</button>
+        {msg && <p role="status" className="text-sm font-bold">{msg}</p>}
+      </section>
       {flipping && <DeckPlayer deck={deck} color={color} onClose={() => setFlipping(false)} />}
     </div>
+  )
+}
+
+function TopicList({ decks, subjectId, onOpen, numbered }: { decks: Deck[]; subjectId: string; onOpen: (d: Deck) => void; numbered?: boolean }) {
+  const state = useAppState()
+  const subject = subjectById(subjectId)
+  return (
+    <ul className="grid gap-2 md:grid-cols-2">
+      {decks.map((d, n) => {
+        const k = KNOW.find((x) => x.level === state.topicKnow[topicId(subjectId, d.topic)])
+        return (
+          <li key={d.topic} className="rise" style={{ ['--i' as string]: n % 6 }}>
+            <button type="button" onClick={() => { sfx('select'); onOpen(d) }}
+              className="surface press flex w-full items-center gap-3 p-3 text-left" style={{ borderLeft: `6px solid ${subject?.color}` }}>
+              {numbered && <span className="mono grid size-6 shrink-0 place-items-center rounded-md text-xs font-bold text-[var(--ink)]" style={{ background: subject?.color }}>{n + 1}</span>}
+              <span className="flex-1 font-bold">{d.topic}</span>
+              {k ? <span className="mono rounded-full px-2 py-0.5 text-[11px] font-bold text-[var(--ink)]" style={{ background: k.color }}>{k.label}</span> : <span className="mono text-xs font-bold">{state.organisers[topicId(subjectId, d.topic)] ? 'Organiser' : NOTES[d.topic] ? 'Notes' : 'Cards'}</span>}
+              <Icon name="arrow" size={18} />
+            </button>
+          </li>
+        )
+      })}
+    </ul>
   )
 }
 
@@ -131,8 +238,25 @@ export default function Study() {
   const state = useAppState()
   const [subjectId, setSubjectId] = useState(state.subjectIds[0] ?? 'maths')
   const [open, setOpen] = useState<Deck | null>(null)
+  const [params, setParams] = useSearchParams()
   const subject = subjectById(subjectId)
   const decks = decksFor(state, subjectId)
+
+  // Deep link from Home: /study?s=<subject>&t=<topic> opens that topic.
+  const ps = params.get('s')
+  const pt = params.get('t')
+  useEffect(() => {
+    if (!ps || !pt) return
+    setSubjectId(ps)
+    const d = decksFor(state, ps).find((x) => x.topic === pt)
+    if (d) setOpen(d)
+    setParams({}, { replace: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ps, pt])
+
+  const order = schoolOrder(state, subjectId)
+  const taughtDecks = order.taught.map((t) => decks.find((d) => d.topic === t)).filter((d): d is Deck => Boolean(d))
+  const otherDecks = decks.filter((d) => !order.taught.includes(d.topic))
 
   if (open) return <TopicPage subjectId={subjectId} deck={open} onClose={() => setOpen(null)} />
 
@@ -157,21 +281,17 @@ export default function Study() {
       {decks.length === 0 ? (
         <p className="surface p-5">No topics listed for {subject?.name} yet. Add your own cards in Settings and they will appear here.</p>
       ) : (
-        <ul className="grid gap-2 md:grid-cols-2">
-          {decks.map((d, n) => {
-            const k = KNOW.find((x) => x.level === state.topicKnow[`${subjectId}:${d.topic}`])
-            return (
-              <li key={d.topic} className="rise" style={{ ['--i' as string]: n % 6 }}>
-                <button type="button" onClick={() => { sfx('select'); setOpen(d) }}
-                  className="surface press flex w-full items-center gap-3 p-3 text-left" style={{ borderLeft: `6px solid ${subject?.color}` }}>
-                  <span className="flex-1 font-bold">{d.topic}</span>
-                  {k ? <span className="mono rounded-full px-2 py-0.5 text-[11px] font-bold text-[var(--ink)]" style={{ background: k.color }}>{k.label}</span> : <span className="mono text-xs font-bold">{NOTES[d.topic] ? 'Notes' : 'Cards'}</span>}
-                  <Icon name="arrow" size={18} />
-                </button>
-              </li>
-            )
-          })}
-        </ul>
+        <>
+          {taughtDecks.length > 0 && (
+            <>
+              <h2 className="label">In class so far, in the order you were taught</h2>
+              <TopicList decks={taughtDecks} subjectId={subjectId} onOpen={setOpen} numbered />
+            </>
+          )}
+          <h2 className="label">{taughtDecks.length ? 'Coming up' : 'All topics'}</h2>
+          {taughtDecks.length === 0 && <p className="text-sm">Open a topic and tick "We have covered this" as your class gets to it. The app then revises those first, in your school order.</p>}
+          <TopicList decks={otherDecks} subjectId={subjectId} onOpen={setOpen} />
+        </>
       )}
     </div>
   )

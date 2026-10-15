@@ -5,6 +5,8 @@ import { todayPlan } from '../../lib/missions'
 import { sfx } from '../../lib/fx/sound'
 import { confetti } from '../../lib/fx/confetti'
 import { KIND } from '../home/Home'
+import { NOTES } from '../../content/notes'
+import { topicId } from '../../lib/curriculum'
 import Icon from '../../ui/Icon'
 import Ring from '../../ui/Ring'
 
@@ -57,6 +59,9 @@ export default function MissionRun() {
     setPhase('done')
   }
 
+  const topic = item?.topic
+  const org = subject && topic ? state.organisers[topicId(subject.id, topic)] : undefined
+  const checkAgainst = org?.text.trim() ? org.text.trim().split(/\r?\n/).filter(Boolean) : topic ? NOTES[topic] ?? [] : []
   const m = (STEPS as Record<string, { how: string }>)[k]
 
   if (phase === 'done') {
@@ -76,6 +81,7 @@ export default function MissionRun() {
 
       <section className="rise rounded-[28px] p-5 text-[var(--ink)] md:p-7" style={{ background: color }}>
         <span className="label !text-[var(--ink)]">{item?.minutes ?? 10} min · {subject?.name ?? 'All subjects'}</span>
+        {item?.topic && <p className="mt-1 text-lg font-extrabold">{item.topic}</p>}
         <h1 className="mt-2 text-5xl font-extrabold tracking-tight">{item?.title ?? 'Mission'}</h1>
         <p className="mt-3 leading-snug font-medium">{m.how}</p>
       </section>
@@ -121,6 +127,15 @@ export default function MissionRun() {
             finish(k === 'paper' ? `${got}/${outOf}` : k === 'prove' ? `${rating}/5${stall ? ` · stalled: ${stall}` : ''}` : `${rating}/5`)
           }}
         >
+          {k !== 'paper' && checkAgainst.length > 0 && (
+            <div className="rounded-2xl bg-[var(--raise2)] p-3">
+              <h2 className="label mb-2">Check yourself against {org?.text.trim() ? 'your knowledge organiser' : 'the key points'}</h2>
+              <ul className="grid max-h-64 gap-1.5 overflow-auto text-sm">
+                {checkAgainst.map((l, i) => <li key={i} className="leading-snug">• {l}</li>)}
+              </ul>
+              <p className="mt-2 text-sm font-bold">Tick off what you remembered. The rest is what to study next.</p>
+            </div>
+          )}
           {k === 'paper' ? (
             <div className="grid grid-cols-2 gap-3">
               <label className="grid gap-1 text-sm font-bold">Marks you got

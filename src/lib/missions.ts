@@ -2,6 +2,7 @@ import { subjectById, type Subject } from '../content/subjects'
 import { SAMPLE_CARDS, type Card } from '../content/cards'
 import type { AppState, MissionKind } from './store'
 import { isToday } from './streak'
+import { focusTopic, topicToLearn } from './curriculum'
 
 export type { MissionKind }
 
@@ -10,6 +11,8 @@ export interface PlanItem {
   title: string
   minutes: number
   subject: Subject | null
+  /** The specific topic to work on, when the mission is about one */
+  topic?: string
   why: string
   done: boolean
 }
@@ -71,11 +74,29 @@ export function todayPlan(s: AppState, now = Date.now()): PlanItem[] {
     })
   }
 
-  const weak = weakestSubjects(s)
+  const learn = topicToLearn(s)
+  if (learn) {
+    const subject = subjectById(learn.subjectId) ?? null
+    const name = learn.topic.replace(/^[\d.]+\s*/, '')
+    items.unshift({
+      kind: 'learn',
+      title: 'Learn a new topic',
+      minutes: 15,
+      subject,
+      topic: learn.topic,
+      done: s.missionLog.some((m) => m.kind === 'learn' && m.detail === learn.topic && isToday(m.at, now)),
+      why: `${name} was taught in class. Read the key points and your knowledge organiser while it is fresh, then say how well you know it.`,
+    })
+  }
+
+  // What the class has covered comes first; within that, the weakest subject.
+  const covered = (id: string) => Object.keys(s.taught).some((k) => k.startsWith(`${id}:`))
+  const weak = weakestSubjects(s).sort((a, b) => Number(covered(b)) - Number(covered(a)))
   const exam = nearestExam(s, now)
   const paperSoon = exam !== null && exam.days <= 14
   const dayIndex = Math.floor(now / 86_400_000)
-  const pick = (offset: number) => subjectById(weak[(dayIndex + offset) % weak.length]) ?? null
+  const covering = weak.filter(covered)
+  const pick = (offset: number, pool = weak) => subjectById(pool[(dayIndex + offset) % pool.length]) ?? null
 
   if (paperSoon && exam) {
     const subject = subjectById(exam.id) ?? null
@@ -89,25 +110,31 @@ export function todayPlan(s: AppState, now = Date.now()): PlanItem[] {
     })
   }
 
-  const dumpSubject = pick(0)
+  const dumpSubject = pick(0, covering.length ? covering : weak)
+  const dumpTopic = dumpSubject ? focusTopic(s, dumpSubject.id, now) ?? undefined : undefined
   items.push({
     kind: 'dump',
     title: 'Brain Dump',
     minutes: 10,
     subject: dumpSubject,
+    topic: dumpTopic,
     done: doneToday(s, 'dump', now),
-    why: `Write everything you remember about ${dumpSubject?.name ?? 'a topic'} from memory, then check it against your notes. The gaps are what to study.`,
+    why: `Write everything you remember about ${dumpTopic ? dumpTopic.replace(/^[\d.]+\s*/, '') : dumpSubject?.name ?? 'a topic'} from memory, then check it against your organiser or notes. The gaps are what to study.`,
   })
 
   if (!paperSoon) {
-    const proveSubject = pick(1)
+    let proveSubject = pick(1)
+    // Do not repeat the Brain Dump's subject when there is another to choose.
+    if (proveSubject?.id === dumpSubject?.id && weak.length > 1) proveSubject = pick(2)
+    const proveTopic = proveSubject ? focusTopic(s, proveSubject.id, now) ?? undefined : undefined
     items.push({
       kind: 'prove',
       title: 'Prove It',
       minutes: 5,
       subject: proveSubject,
+      topic: proveTopic,
       done: doneToday(s, 'prove', now),
-      why: `Explain one idea from ${proveSubject?.name ?? 'a subject'} out loud in 90 seconds with your notes closed. Where you stall is where to focus.`,
+      why: `Explain one idea from ${proveTopic ? proveTopic.replace(/^[\d.]+\s*/, '') : proveSubject?.name ?? 'a subject'} out loud in 90 seconds with your notes closed. Where you stall is where to focus.`,
     })
   }
   return items.slice(0, 3)

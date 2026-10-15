@@ -62,6 +62,9 @@ export const FAQ: { q: string; a: string }[] = [
   { q: 'Why can I only reveal after rating how sure I am?', a: 'Guessing how well you know something before you check is one of the best memory exercises there is. It also lets the app spot when you feel sure but are wrong.' },
   { q: 'Why does the app tell me a card "came back too soon"?', a: 'You pressed Easy, so it will be spaced further out next time. Nothing is wrong.' },
   { q: 'Where do I get cards?', a: 'A few examples come built in. Add your own in Settings under My cards. Cards for a subject only appear if you picked that subject.' },
+  { q: 'Does it follow what my school is teaching?', a: 'Yes, if you tell it. Open a topic in Study and tick "We have covered this". The app then revises those topics first, in the order you were taught them, and starts with a Learn mission for the newest one.' },
+  { q: 'How do I add my knowledge organiser?', a: 'Open the topic in Study. Paste the text, add a link, or upload a photo or PDF (it stays on this device). If you write each fact as "term: definition", one per line, the app makes flashcards from it.' },
+  { q: 'What does the app tell me to study?', a: 'Each day it gives you a short plan: Learn a topic your class just covered, the Queue of cards due, then a Brain Dump or Prove It on the topic you are most foggy on. After each one you check yourself against your organiser or the key points.' },
   { q: 'Is my progress saved?', a: 'Yes. It is stored on this device straight away. When you are signed in it is also saved to your account, so it follows you to your phone or computer.' },
   { q: 'Can I use it offline?', a: 'Yes. Reviews made offline are kept and synced when you are back online.' },
 ]

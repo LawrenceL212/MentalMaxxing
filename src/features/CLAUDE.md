@@ -3,8 +3,8 @@
 - `onboarding/Setup.tsx` year, subjects, exam dates (once). `onboarding/Tutorial.tsx` 6-step tour (also replayed from Help).
 - `home/Home.tsx` hero mission + today's plan + exam countdown. Exports `KIND` (mission colour/icon/route).
 - `session/Session.tsx` full-screen card review (new cards show the answer first): confidence 1-5, reveal, rate with interval previews, keyboard 1-5/Space/1-4. Again re-queues the card.
-- `run/MissionRun.tsx` Brain Dump, Prove It (90 s timer), Past paper: brief -> work -> record -> logs via `actions.logMission`.
-- `study/Study.tsx` Study tab: topics per subject -> key points (`content/notes.ts`), "how well do you know it" self-rating (feeds the fog map), links, flashcard deck player (free practice, no scheduling).
+- `run/MissionRun.tsx` (shows the specific topic and a check-against panel from the organiser or notes) Brain Dump, Prove It (90 s timer), Past paper: brief -> work -> record -> logs via `actions.logMission`.
+- `study/Study.tsx` Study tab: topics per subject in school order (taught first, from "We have covered this") -> key points (`content/notes.ts`), "how well do you know it" self-rating (feeds the fog map), links, knowledge organiser (paste text, link, or file kept on device -> flashcards), deck player (free practice). Opens from Home via `/study?s=&t=`.
 - `mock/MockExam.tsx` timed mock: setup (real paper lengths) -> countdown on the wall clock (survives refresh) -> mark by question and topic -> result; weak topics update `topicKnow`. Logs a `paper` mission.
 - `progress/Progress.tsx` retention headline, trend, 14-day chart, per-subject bars, fog map, confidence vs result, exam readiness, paper marks. `progress/stats.ts` weekly retention (tested).
 - `settings/Settings.tsx` account, sound, my cards, theme, subjects + exam dates, resources incl. student-added links.
