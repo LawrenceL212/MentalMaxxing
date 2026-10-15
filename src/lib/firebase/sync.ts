@@ -1,15 +1,60 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useSyncExternalStore, useState } from 'react'
 import {
+  browserLocalPersistence,
+  browserSessionPersistence,
   createUserWithEmailAndPassword,
   onAuthStateChanged,
   sendPasswordResetEmail,
+  setPersistence,
   signInWithEmailAndPassword,
   signOut,
   type User,
 } from 'firebase/auth'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
-import { getFirebase } from './index'
+import { firebaseConfigured, getFirebase } from './index'
 import { actions, getState, subscribe, type AppState } from '../store'
+
+/**
+ * loading: waiting to learn if someone is signed in. signedOut: show the sign-in screen.
+ * syncing: signed in, fetching their saved data. ready: show the app.
+ */
+export type AuthStatus = 'loading' | 'signedOut' | 'syncing' | 'ready'
+
+const GUEST_KEY = 'mentalmaxxing:guest'
+const readGuest = () => {
+  try {
+    return localStorage.getItem(GUEST_KEY) === '1'
+  } catch {
+    return false
+  }
+}
+
+let status: AuthStatus = firebaseConfigured ? 'loading' : 'ready'
+let guest = readGuest()
+const listeners = new Set<() => void>()
+const emit = () => listeners.forEach((l) => l())
+const setStatus = (s: AuthStatus) => {
+  status = s
+  emit()
+}
+const onChange = (l: () => void) => {
+  listeners.add(l)
+  return () => listeners.delete(l)
+}
+
+export const useAuthStatus = (): AuthStatus => useSyncExternalStore(onChange, () => status)
+export const useGuest = (): boolean => useSyncExternalStore(onChange, () => guest)
+
+/** Use the app on this device without an account. Progress is not backed up. */
+export function continueAsGuest() {
+  guest = true
+  try {
+    localStorage.setItem(GUEST_KEY, '1')
+  } catch {
+    /* ignore */
+  }
+  emit()
+}
 
 let started = false
 let applyingRemote = false
@@ -22,7 +67,7 @@ async function reconcile(user: User) {
   const snap = await getDoc(ref)
   const remote = snap.exists() ? (snap.data() as AppState) : null
   const local = getState()
-  if (remote && remote.updatedAt > local.updatedAt) {
+  if (remote && remote.updatedAt >= local.updatedAt) {
     applyingRemote = true
     actions.replace(remote)
     applyingRemote = false
@@ -31,7 +76,8 @@ async function reconcile(user: User) {
   }
 }
 
-function startSync() {
+/** Call once at startup. Watches sign-in and keeps the cloud copy in step with this device. */
+export function startSync() {
   const fb = getFirebase()
   if (!fb || started) return
   started = true
@@ -47,7 +93,11 @@ function startSync() {
   })
 
   onAuthStateChanged(fb.auth, (user) => {
-    if (user) void reconcile(user).catch(() => undefined)
+    if (!user) return setStatus('signedOut')
+    setStatus('syncing')
+    // Never leave the student on a spinner: offline or slow, fall through to local data.
+    const timeout = new Promise<void>((resolve) => setTimeout(resolve, 6000))
+    void Promise.race([reconcile(user).catch(() => undefined), timeout]).then(() => setStatus('ready'))
   })
 }
 
@@ -84,7 +134,6 @@ export function useAuth() {
 
   useEffect(() => {
     if (!fb) return
-    startSync()
     return onAuthStateChanged(fb.auth, setUser)
   }, [fb])
 
@@ -93,12 +142,13 @@ export function useAuth() {
     user,
     error,
     notice,
-    /** Signs in, or creates the account when `create` is true. Returns true on success. */
-    submit: async (email: string, password: string, create: boolean) => {
+    /** Signs in, or creates the account when `create` is true. `remember` keeps the student signed in on this device. */
+    submit: async (email: string, password: string, create: boolean, remember: boolean) => {
       if (!fb) return false
       setError('')
       setNotice('')
       try {
+        await setPersistence(fb.auth, remember ? browserLocalPersistence : browserSessionPersistence)
         if (create) await createUserWithEmailAndPassword(fb.auth, email, password)
         else await signInWithEmailAndPassword(fb.auth, email, password)
         return true
@@ -118,6 +168,15 @@ export function useAuth() {
         setError(friendlyError(err))
       }
     },
-    signOut: () => (fb ? signOut(fb.auth) : Promise.resolve()),
+    signOut: async () => {
+      if (fb?.auth.currentUser) await signOut(fb.auth)
+      guest = false
+      try {
+        localStorage.removeItem(GUEST_KEY)
+      } catch {
+        /* ignore */
+      }
+      emit()
+    },
   }
 }

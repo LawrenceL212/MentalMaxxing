@@ -1,3 +1,4 @@
 # src/ui/
-- `theme.css` Tailwind import + CSS variables for the three themes (`[data-theme]`), fixed mission and rating colours, fonts, focus ring, reduced motion.
-- `Layout.tsx` page shell with bottom nav (Home / Progress / Settings); applies the saved theme to `<html data-theme>`. The Session screen is reached from Home and has its own Exit link.
+- `theme.css` Tailwind import, CSS variables for the three themes (`[data-theme]`), mission/rating colours, fonts, components (`.surface .field .chip .btn .label`), animations, page column `.wrap`, `.tabbar`.
+- `Layout.tsx` header (logo, desktop nav, streak, sound, help) + content column + phone tab bar. Content has bottom padding equal to the tab bar so nothing is hidden.
+- `Icon.tsx` inline SVG icons by name. `Logo.tsx` brand mark. `Ring.tsx` animated progress ring.

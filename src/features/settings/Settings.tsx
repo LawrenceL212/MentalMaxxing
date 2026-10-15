@@ -2,13 +2,14 @@ import { useState } from 'react'
 import { SUBJECTS, subjectById } from '../../content/subjects'
 import { actions, useAppState } from '../../lib/store'
 import { useAuth } from '../../lib/firebase/sync'
+import { sfx } from '../../lib/fx/sound'
 
 export default function Settings() {
   const state = useAppState()
   const auth = useAuth()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [creating, setCreating] = useState(false)
+  const [cFront, setCFront] = useState('')
+  const [cBack, setCBack] = useState('')
+  const [cTopic, setCTopic] = useState('')
   const [subjectId, setSubjectId] = useState(state.subjectIds[0] ?? 'maths')
   const [label, setLabel] = useState('')
   const [url, setUrl] = useState('')
@@ -32,11 +33,11 @@ export default function Settings() {
   }
 
   return (
-    <>
-      <h1 className="text-3xl font-extrabold">Settings</h1>
+    <div className="grid content-start gap-4 md:grid-cols-2 md:gap-6">
+      <h1 className="text-3xl font-extrabold md:col-span-2">Settings</h1>
 
-      <section className="grid gap-2 rounded-3xl bg-[var(--raise)] p-4">
-        <h2 className="mono text-xs font-bold tracking-widest text-[var(--muted)] uppercase">Account</h2>
+      <section className="surface grid content-start gap-2 p-4">
+        <h2 className="label">Account</h2>
         {!auth.available ? (
           <p className="text-sm text-[var(--muted)]">Sync is not set up yet. Your progress is saved on this device.</p>
         ) : auth.user ? (
@@ -45,33 +46,40 @@ export default function Settings() {
             <button type="button" onClick={() => void auth.signOut()} className="rounded-xl bg-[var(--raise2)] px-3 py-2 font-bold">Sign out</button>
           </div>
         ) : (
-          <form
-            className="grid gap-2"
-            onSubmit={async (e) => {
-              e.preventDefault()
-              if (await auth.submit(email.trim(), password, creating)) setPassword('')
-            }}
-          >
-            <p className="text-sm text-[var(--muted)]">Sign in to keep your progress on every device.</p>
-            <label className="grid gap-1 text-sm font-bold">Email
-              <input id="auth-email" type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} className="rounded-xl bg-[var(--raise2)] px-3 py-2.5 font-normal" />
-            </label>
-            <label className="grid gap-1 text-sm font-bold">Password
-              <input id="auth-password" type="password" required minLength={6} autoComplete={creating ? 'new-password' : 'current-password'} value={password} onChange={(e) => setPassword(e.target.value)} className="rounded-xl bg-[var(--raise2)] px-3 py-2.5 font-normal" />
-            </label>
-            {auth.error && <p role="alert" className="text-sm font-bold text-[var(--r-again)]">{auth.error}</p>}
-            {auth.notice && <p role="status" className="text-sm font-bold text-[var(--r-good)]">{auth.notice}</p>}
-            <button type="submit" className="rounded-xl bg-white py-3 font-extrabold text-[var(--ink)]">{creating ? 'Create account' : 'Sign in'}</button>
-            <div className="flex justify-between text-sm font-bold">
-              <button type="button" onClick={() => setCreating((c) => !c)} className="underline">{creating ? 'I already have an account' : 'Create account'}</button>
-              {!creating && <button type="button" onClick={() => email && void auth.resetPassword(email.trim())} className="underline">Forgot password</button>}
-            </div>
-          </form>
+          <div className="grid gap-2 text-sm">
+            <p className="text-[var(--muted)]">You are using MentalMaxxing without an account. Progress stays on this device.</p>
+            <button type="button" onClick={() => void auth.signOut()} className="btn btn-light">Sign in or create account</button>
+          </div>
         )}
       </section>
 
-      <section className="grid gap-2 rounded-3xl bg-[var(--raise)] p-4">
-        <h2 className="mono text-xs font-bold tracking-widest text-[var(--muted)] uppercase">Theme</h2>
+      <section className="surface content-start grid gap-2 p-4">
+        <h2 className="label">Sound and haptics</h2>
+        <button type="button" aria-pressed={state.soundOn} onClick={() => { actions.setSound(!state.soundOn); if (!state.soundOn) setTimeout(() => sfx('select'), 0) }}
+          className={`btn ${state.soundOn ? 'btn-light' : 'btn-ghost'}`}>{state.soundOn ? 'Sound is on' : 'Sound is off'}</button>
+      </section>
+
+      <section className="surface content-start grid gap-2 p-4">
+        <h2 className="label">My cards ({state.userCards.length})</h2>
+        <form className="grid gap-2" onSubmit={(e) => { e.preventDefault(); actions.addCard({ subjectId, topic: cTopic.trim() || 'My cards', front: cFront.trim(), back: cBack.trim() }); setCFront(''); setCBack(''); sfx('select') }}>
+          <p className="text-sm text-[var(--muted)]">Adds to the subject chosen under Revision resources ({subject?.name}).</p>
+          <input className="field" placeholder="Topic (optional)" value={cTopic} onChange={(e) => setCTopic(e.target.value)} />
+          <input className="field" required placeholder="Question" value={cFront} onChange={(e) => setCFront(e.target.value)} />
+          <textarea className="field" required rows={2} placeholder="Answer" value={cBack} onChange={(e) => setCBack(e.target.value)} />
+          <button type="submit" className="btn btn-primary">Add card</button>
+        </form>
+        <ul className="grid gap-1.5 text-sm">
+          {state.userCards.map((c) => (
+            <li key={c.id} className="flex items-center justify-between gap-2 rounded-xl bg-[var(--raise2)] p-2">
+              <span className="truncate"><b>{subjectById(c.subjectId)?.name}</b> · {c.front}</span>
+              <button type="button" onClick={() => actions.deleteCard(c.id)} className="rounded-lg bg-[var(--raise)] px-2 py-1 text-xs font-bold">Delete</button>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="surface grid content-start gap-2 p-4">
+        <h2 className="label">Theme</h2>
         <div className="grid grid-cols-3 gap-2">
           {(['arctic', 'molten', 'obsidian'] as const).map((t) => (
             <button key={t} type="button" aria-pressed={state.theme === t} onClick={() => actions.setTheme(t)}
@@ -82,8 +90,8 @@ export default function Settings() {
         </div>
       </section>
 
-      <section className="grid gap-2 rounded-3xl bg-[var(--raise)] p-4">
-        <h2 className="mono text-xs font-bold tracking-widest text-[var(--muted)] uppercase">My subjects</h2>
+      <section className="surface grid content-start gap-2 p-4">
+        <h2 className="label">My subjects</h2>
         <div className="grid gap-1.5">
           {SUBJECTS.filter((s) => !s.portfolioOnly).map((s) => {
             const on = state.subjectIds.includes(s.id)
@@ -106,8 +114,8 @@ export default function Settings() {
         </div>
       </section>
 
-      <section className="grid gap-3 rounded-3xl bg-[var(--raise)] p-4">
-        <h2 className="mono text-xs font-bold tracking-widest text-[var(--muted)] uppercase">Revision resources</h2>
+      <section className="surface grid content-start gap-3 p-4">
+        <h2 className="label">Revision resources</h2>
         <label className="grid gap-1 text-sm font-bold">
           Subject
           <select value={subjectId} onChange={(e) => setSubjectId(e.target.value)} className="rounded-xl bg-[var(--raise2)] px-3 py-2.5">
@@ -128,15 +136,15 @@ export default function Settings() {
         </ul>
         <form onSubmit={addResource} className="grid gap-2">
           <label className="grid gap-1 text-sm font-bold">Name
-            <input id="res-label" value={label} onChange={(e) => setLabel(e.target.value)} placeholder="Mr Smith's notes" className="rounded-xl bg-[var(--raise2)] px-3 py-2.5 font-normal" />
+            <input id="res-label" value={label} onChange={(e) => setLabel(e.target.value)} placeholder="Mr Smith's notes" className="field" />
           </label>
           <label className="grid gap-1 text-sm font-bold">Web address
-            <input id="res-url" required value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://" inputMode="url" className="rounded-xl bg-[var(--raise2)] px-3 py-2.5 font-normal" />
+            <input id="res-url" required value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://" inputMode="url" className="field" />
           </label>
           {error && <p role="alert" className="text-sm font-bold text-[var(--r-again)]">{error}</p>}
           <button type="submit" className="rounded-xl bg-white py-3 font-extrabold text-[var(--ink)]">Add resource</button>
         </form>
       </section>
-    </>
+    </div>
   )
 }

@@ -2,6 +2,16 @@ import { useSyncExternalStore } from 'react'
 import { INITIAL_SRS, type Grade, type SrsState, review } from '../srs/sm2'
 import type { Resource } from '../../content/subjects'
 
+export type MissionKind = 'queue' | 'dump' | 'prove' | 'paper'
+
+export interface MissionLogEntry {
+  kind: MissionKind
+  subjectId: string | null
+  at: number
+  /** Free text outcome: coverage for Brain Dump, stall point for Prove It, marks for Past paper */
+  detail?: string
+}
+
 export interface CardProgress extends SrsState {
   cardId: string
   /** Epoch ms when next due */
@@ -36,6 +46,13 @@ export interface AppState {
   /** subjectId -> resources the student added themselves */
   customResources: Record<string, Resource[]>
   theme: 'arctic' | 'molten' | 'obsidian'
+  /** False until the student has finished first-run setup */
+  onboarded: boolean
+  /** False until the student has seen the quick tutorial */
+  tutorialSeen: boolean
+  /** Sound effects and haptics */
+  soundOn: boolean
+  missionLog: MissionLogEntry[]
   /** Epoch ms of the last local change, used to pick the newer copy when syncing */
   updatedAt: number
 }
@@ -52,6 +69,10 @@ export const DEFAULT_STATE: AppState = {
   userCards: [],
   customResources: {},
   theme: 'arctic',
+  onboarded: false,
+  tutorialSeen: false,
+  soundOn: true,
+  missionLog: [],
   updatedAt: 0,
 }
 
@@ -89,6 +110,13 @@ export const actions = {
   /** Replace local state with a newer remote copy without bumping updatedAt */
   replace: (remote: AppState) => set({ ...DEFAULT_STATE, ...remote }, false),
   setTheme: (theme: AppState['theme']) => set({ ...state, theme }),
+  setTutorialSeen: (tutorialSeen: boolean) => set({ ...state, tutorialSeen }),
+  setSound: (soundOn: boolean) => set({ ...state, soundOn }),
+  finishSetup: (setup: { yearGroup: number; subjectIds: string[]; examDates: Record<string, string> }) =>
+    set({ ...state, ...setup, onboarded: true }),
+  logMission: (entry: Omit<MissionLogEntry, 'at'>) =>
+    set({ ...state, missionLog: [...state.missionLog, { ...entry, at: Date.now() }] }),
+  deleteCard: (id: string) => set({ ...state, userCards: state.userCards.filter((c) => c.id !== id) }),
   setYear: (yearGroup: number) => set({ ...state, yearGroup }),
   toggleSubject: (id: string) =>
     set({
