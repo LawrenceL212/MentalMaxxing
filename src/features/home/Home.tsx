@@ -6,12 +6,13 @@ import { subjectById } from '../../content/subjects'
 import { sfx } from '../../lib/fx/sound'
 import Icon, { type IconName } from '../../ui/Icon'
 import Ring from '../../ui/Ring'
+import { fog, forecast } from '../../lib/fog'
 
 export const KIND: Record<MissionKind, { color: string; icon: IconName; route: string }> = {
   queue: { color: 'var(--m-queue)', icon: 'cards', route: '/session' },
   dump: { color: 'var(--m-dump)', icon: 'pen', route: '/run/dump' },
   prove: { color: 'var(--m-prove)', icon: 'timer', route: '/run/prove' },
-  paper: { color: 'var(--m-paper)', icon: 'target', route: '/run/paper' },
+  paper: { color: 'var(--m-paper)', icon: 'target', route: '/mock' },
 }
 
 const greeting = () => {
@@ -50,6 +51,8 @@ export default function Home() {
   const next = plan.find((i) => !i.done)
   const doneCount = plan.filter((i) => i.done).length
   const streak = streakDays(state)
+  const fogNow = fog(state)
+  const curve = forecast(state)
   const exams = state.subjectIds
     .map((id) => ({ subject: subjectById(id), days: daysUntilExam(state.examDates[id]) }))
     .filter((x) => x.subject && x.days !== null && x.days >= 0)
@@ -89,7 +92,23 @@ export default function Home() {
       </div>
 
       <div className="grid content-start gap-4">
-        <section className="surface rise p-4" style={{ ['--i' as string]: 1 }} aria-label="Today's plan">
+        <section className="surface rise p-4" style={{ ['--i' as string]: 1 }} aria-label="Memory forecast">
+          <div className="mb-2 flex items-center justify-between">
+            <h2 className="label">Why now</h2>
+            <span className="mono text-xs font-bold">Fog {fogNow === null ? '–' : `${Math.round(fogNow * 100)}%`}</span>
+          </div>
+          {curve.some((v) => v > 0) ? (
+            <>
+              <svg viewBox="0 0 220 60" className="w-full" role="img" aria-label="Predicted recall over the next week if you do nothing">
+                <polyline fill="none" stroke="var(--accent)" strokeWidth="2.5" strokeLinecap="round" points={curve.map((v, i) => `${(i / (curve.length - 1)) * 216 + 2},${56 - v * 52}`).join(' ')} />
+              </svg>
+              <div className="mono flex justify-between text-[11px]"><span>Today {Math.round(curve[0] * 100)}%</span><span>In a week {Math.round(curve.at(-1)! * 100)}%</span></div>
+              <p className="mt-1 text-sm">If you stop now, you will remember {Math.round(curve[0] * 100 - curve.at(-1)! * 100)} points less by next week.</p>
+            </>
+          ) : <p className="text-sm">Finish your first Queue and this shows how fast you would forget without revising.</p>}
+        </section>
+
+        <section className="surface rise p-4" style={{ ['--i' as string]: 2 }} aria-label="Today's plan">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="label">Today's plan</h2>
             <Ring value={doneCount / plan.length} size={44} stroke={5} color="var(--r-good)" label={`${doneCount} of ${plan.length} done`}>
@@ -118,7 +137,13 @@ export default function Home() {
           </ul>
         </section>
 
-        <section className="surface rise p-4" style={{ ['--i' as string]: 2 }} aria-label="Exam countdown">
+        <Link to="/mock" onClick={() => sfx('select')} className="surface press rise flex items-center gap-3 p-3" style={{ ['--i' as string]: 3 }}>
+          <span className="grid size-11 place-items-center rounded-xl text-[var(--ink)]" style={{ background: 'var(--m-paper)' }}><Icon name="target" size={22} /></span>
+          <span className="flex-1"><b className="block">Mock exam</b><span className="text-sm">Sit a past paper against the clock, then mark it</span></span>
+          <Icon name="arrow" size={18} />
+        </Link>
+
+        <section className="surface rise p-4" style={{ ['--i' as string]: 4 }} aria-label="Exam countdown">
           <h2 className="label mb-3">Exam countdown</h2>
           {exams.length ? (
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 md:grid-cols-2">

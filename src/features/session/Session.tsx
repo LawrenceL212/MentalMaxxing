@@ -33,6 +33,9 @@ export default function Session() {
   const card = queue[index]
   const done = !card
   const subject = card ? subjectById(card.subjectId) : undefined
+  // First time you meet a card there is nothing to recall yet: show the answer so you can learn it.
+  const isNew = Boolean(card) && !state.progress[card.id]
+  const shown = revealed || isNew
 
   useEffect(() => {
     if (done && total.current > 0 && !logged.current) {
@@ -67,14 +70,14 @@ export default function Session() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (done || (e.target as HTMLElement).tagName === 'INPUT') return
-      if (!revealed && /^[1-5]$/.test(e.key)) {
+      if (!shown && /^[1-5]$/.test(e.key)) {
         setConfidence(Number(e.key))
         sfx('tap')
-      } else if (!revealed && (e.key === ' ' || e.key === 'Enter') && confidence) {
+      } else if (!shown && (e.key === ' ' || e.key === 'Enter') && confidence) {
         e.preventDefault()
         sfx('reveal')
         setRevealed(true)
-      } else if (revealed) {
+      } else if (shown) {
         const g = GRADES.find((x) => x.key === e.key)
         if (g) rate(g.grade)
       }
@@ -115,7 +118,7 @@ export default function Session() {
         <div className="grid flex-1 content-start gap-4 p-5">
           <h1 className="text-2xl leading-tight font-bold md:text-3xl">{card.front}</h1>
           <p className="flex items-center gap-2 rounded-xl bg-[var(--raise2)] p-3 text-sm"><Icon name="pen" size={18} />Write your answer on paper first.</p>
-          <div role="group" aria-label="How sure are you?">
+          {!isNew && <div role="group" aria-label="How sure are you?">
             <span className="label mb-2 block">How sure are you?</span>
             <div className="grid grid-cols-5 gap-1.5">
               {[1, 2, 3, 4, 5].map((n) => (
@@ -127,14 +130,15 @@ export default function Session() {
               ))}
             </div>
             <div className="mono mt-1 flex justify-between text-[11px]"><span>Guessing</span><span>Certain</span></div>
-          </div>
-          {revealed && <p className="rise border-t-2 border-dashed border-[var(--line)] pt-4 text-lg leading-relaxed">{card.back}</p>}
+          </div>}
+          {isNew && <p className="rounded-xl bg-[var(--m-shuffle)] p-3 text-sm font-bold text-[var(--ink)]">New card. Read the answer and learn it, then rate how well you think you will remember it.</p>}
+          {shown && <p className="rise border-t-2 border-dashed border-[var(--line)] pt-4 text-lg leading-relaxed">{card.back}</p>}
         </div>
       </article>
 
       {note && <p role="status" className="rounded-2xl bg-[var(--m-prove)] p-3 text-sm font-bold text-[var(--ink)]">{note}</p>}
 
-      {!revealed ? (
+      {!shown ? (
         <button type="button" disabled={!confidence} onClick={() => { sfx('reveal'); setRevealed(true) }} className="btn btn-light w-full py-4 text-lg">
           Reveal answer <span className="mono hidden text-xs opacity-60 md:inline">Space</span>
         </button>

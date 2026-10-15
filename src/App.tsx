@@ -7,7 +7,8 @@ import Session from './features/session/Session'
 import MissionRun from './features/run/MissionRun'
 import Progress from './features/progress/Progress'
 import Settings from './features/settings/Settings'
-import Flashcards from './features/flashcards/Flashcards'
+import MockExam from './features/mock/MockExam'
+import Study from './features/study/Study'
 import Help from './features/help/Help'
 import Welcome from './features/auth/Welcome'
 import Setup from './features/onboarding/Setup'
@@ -47,10 +48,13 @@ function Gate() {
     <HashRouter>
       <Routes>
         <Route path="session" element={<Session />} />
+        <Route path="mock" element={<MockExam />} />
+        <Route path="run/paper" element={<Navigate to="/mock" replace />} />
         <Route path="run/:kind" element={<MissionRun />} />
         <Route element={<Layout />}>
           <Route index element={<Home />} />
-          <Route path="cards" element={<Flashcards />} />
+          <Route path="study" element={<Study />} />
+          <Route path="cards" element={<Navigate to="/study" replace />} />
           <Route path="progress" element={<Progress />} />
           <Route path="settings" element={<Settings />} />
           <Route path="help" element={<Help />} />

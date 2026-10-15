@@ -50,6 +50,8 @@ export interface AppState {
   onboarded: boolean
   /** False until the student has seen the quick tutorial */
   tutorialSeen: boolean
+  /** `${subjectId}:${topic}` -> how well the student says they know it: 1 not yet, 2 shaky, 3 solid */
+  topicKnow: Record<string, 1 | 2 | 3>
   /** Sound effects and haptics */
   soundOn: boolean
   missionLog: MissionLogEntry[]
@@ -72,6 +74,7 @@ export const DEFAULT_STATE: AppState = {
   onboarded: false,
   tutorialSeen: false,
   soundOn: true,
+  topicKnow: {},
   missionLog: [],
   updatedAt: 0,
 }
@@ -111,6 +114,7 @@ export const actions = {
   replace: (remote: AppState) => set({ ...DEFAULT_STATE, ...remote }, false),
   setTheme: (theme: AppState['theme']) => set({ ...state, theme }),
   setTutorialSeen: (tutorialSeen: boolean) => set({ ...state, tutorialSeen }),
+  setTopicKnow: (key: string, level: 1 | 2 | 3) => set({ ...state, topicKnow: { ...state.topicKnow, [key]: level } }),
   setSound: (soundOn: boolean) => set({ ...state, soundOn }),
   finishSetup: (setup: { yearGroup: number; subjectIds: string[]; examDates: Record<string, string> }) =>
     set({ ...state, ...setup, onboarded: true }),
