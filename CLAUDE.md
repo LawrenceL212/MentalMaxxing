@@ -10,7 +10,7 @@ GCSE study scheduler (Bournemouth School students). PWA: Vite + React + TypeScri
 - `src/features/` one folder per screen: home, session, progress, settings
 - `src/lib/srs/` spaced-repetition maths (SM-2)
 - `src/lib/store/` app state in localStorage
-- `src/lib/firebase/` Firebase init, Google sign-in, Firestore sync
+- `src/lib/firebase/` Firebase init, email/password sign-in, Firestore sync
 - `src/lib/missions.ts` picks today's mission
 - `src/ui/` theme tokens and the shared layout
 - `firestore.rules`, `.github/workflows/deploy.yml`, `vite.config.ts` (PWA + base path)

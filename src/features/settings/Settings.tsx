@@ -6,6 +6,9 @@ import { useAuth } from '../../lib/firebase/sync'
 export default function Settings() {
   const state = useAppState()
   const auth = useAuth()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [creating, setCreating] = useState(false)
   const [subjectId, setSubjectId] = useState(state.subjectIds[0] ?? 'maths')
   const [label, setLabel] = useState('')
   const [url, setUrl] = useState('')
@@ -42,11 +45,28 @@ export default function Settings() {
             <button type="button" onClick={() => void auth.signOut()} className="rounded-xl bg-[var(--raise2)] px-3 py-2 font-bold">Sign out</button>
           </div>
         ) : (
-          <>
+          <form
+            className="grid gap-2"
+            onSubmit={async (e) => {
+              e.preventDefault()
+              if (await auth.submit(email.trim(), password, creating)) setPassword('')
+            }}
+          >
             <p className="text-sm text-[var(--muted)]">Sign in to keep your progress on every device.</p>
-            <button type="button" onClick={() => void auth.signIn()} className="rounded-xl bg-white py-3 font-extrabold text-[var(--ink)]">Sign in with Google</button>
+            <label className="grid gap-1 text-sm font-bold">Email
+              <input id="auth-email" type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} className="rounded-xl bg-[var(--raise2)] px-3 py-2.5 font-normal" />
+            </label>
+            <label className="grid gap-1 text-sm font-bold">Password
+              <input id="auth-password" type="password" required minLength={6} autoComplete={creating ? 'new-password' : 'current-password'} value={password} onChange={(e) => setPassword(e.target.value)} className="rounded-xl bg-[var(--raise2)] px-3 py-2.5 font-normal" />
+            </label>
             {auth.error && <p role="alert" className="text-sm font-bold text-[var(--r-again)]">{auth.error}</p>}
-          </>
+            {auth.notice && <p role="status" className="text-sm font-bold text-[var(--r-good)]">{auth.notice}</p>}
+            <button type="submit" className="rounded-xl bg-white py-3 font-extrabold text-[var(--ink)]">{creating ? 'Create account' : 'Sign in'}</button>
+            <div className="flex justify-between text-sm font-bold">
+              <button type="button" onClick={() => setCreating((c) => !c)} className="underline">{creating ? 'I already have an account' : 'Create account'}</button>
+              {!creating && <button type="button" onClick={() => email && void auth.resetPassword(email.trim())} className="underline">Forgot password</button>}
+            </div>
+          </form>
         )}
       </section>
 
