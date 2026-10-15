@@ -1,5 +1,7 @@
 # src/lib/ logic and services (no JSX except hooks)
 - `missions.ts` `todayPlan(state)`, `pickMission`, `dueCards`, `allCards`, `daysUntilExam`. The only place that decides what to study.
+- `curriculum.ts` school order (`schoolOrder`), `focusTopic` (foggiest taught topic), `topicToLearn`. Tested.
+- `organiser.ts` turns pasted "term: definition" lines into cards (stable ids). `files.ts` IndexedDB storage for organiser files (device only).
 - `fog.ts` recall model: `recall`, `fog`, `fogByTopic` (uses self-rating before reviews), `forecast`. Tested.
 - `mock.ts` mark-entry maths: `totals`, `byTopic`, `levelFor`, `clock`. Tested.
 - `flashcards.ts` `decksFor(state, subjectId)`: a deck per topic, with an automatic prompt card (`topicCard`) plus real cards. Tested.

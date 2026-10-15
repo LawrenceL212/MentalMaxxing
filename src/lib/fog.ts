@@ -1,8 +1,9 @@
-import { allCards } from './missions'
+import { SAMPLE_CARDS } from '../content/cards'
 import { decksFor } from './flashcards'
 import type { AppState } from './store'
 
 const DAY = 86_400_000
+const allCards = (s: AppState) => [...SAMPLE_CARDS, ...s.userCards].filter((c) => s.subjectIds.includes(c.subjectId))
 
 /** Chance of recalling a card at `at`. 100% right after a review and 90% when the card falls due (one interval later), decaying on the card's own schedule. Unseen cards are 0. */
 export function recall(s: AppState, cardId: string, at: number): number {

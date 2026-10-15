@@ -2,7 +2,7 @@ import { useSyncExternalStore } from 'react'
 import { INITIAL_SRS, type Grade, type SrsState, review } from '../srs/sm2'
 import type { Resource } from '../../content/subjects'
 
-export type MissionKind = 'queue' | 'dump' | 'prove' | 'paper'
+export type MissionKind = 'queue' | 'learn' | 'dump' | 'prove' | 'paper'
 
 export interface MissionLogEntry {
   kind: MissionKind
@@ -52,6 +52,10 @@ export interface AppState {
   tutorialSeen: boolean
   /** `${subjectId}:${topic}` -> how well the student says they know it: 1 not yet, 2 shaky, 3 solid */
   topicKnow: Record<string, 1 | 2 | 3>
+  /** `${subjectId}:${topic}` -> epoch ms the student marked it as taught in class. Gives school teaching order. */
+  taught: Record<string, number>
+  /** `${subjectId}:${topic}` -> the school knowledge organiser: pasted text and/or a link (files are kept on the device). */
+  organisers: Record<string, { text: string; link: string; fileName?: string }>
   /** Sound effects and haptics */
   soundOn: boolean
   missionLog: MissionLogEntry[]
@@ -75,6 +79,8 @@ export const DEFAULT_STATE: AppState = {
   tutorialSeen: false,
   soundOn: true,
   topicKnow: {},
+  taught: {},
+  organisers: {},
   missionLog: [],
   updatedAt: 0,
 }
@@ -115,6 +121,21 @@ export const actions = {
   setTheme: (theme: AppState['theme']) => set({ ...state, theme }),
   setTutorialSeen: (tutorialSeen: boolean) => set({ ...state, tutorialSeen }),
   setTopicKnow: (key: string, level: 1 | 2 | 3) => set({ ...state, topicKnow: { ...state.topicKnow, [key]: level } }),
+  setTaught: (key: string, on: boolean, at = Date.now()) => {
+    const taught = { ...state.taught }
+    if (on) taught[key] = at
+    else delete taught[key]
+    set({ ...state, taught })
+  },
+  setOrganiser: (key: string, patch: Partial<AppState['organisers'][string]>) =>
+    set({ ...state, organisers: { ...state.organisers, [key]: { ...(state.organisers[key] ?? { text: '', link: '' }), ...patch } } }),
+  /** Adds cards, skipping ids that already exist (so re-importing an organiser is safe). */
+  addCards: (cards: UserCard[]) => {
+    const have = new Set(state.userCards.map((c) => c.id))
+    const fresh = cards.filter((c) => !have.has(c.id))
+    if (fresh.length) set({ ...state, userCards: [...state.userCards, ...fresh] })
+    return fresh.length
+  },
   setSound: (soundOn: boolean) => set({ ...state, soundOn }),
   finishSetup: (setup: { yearGroup: number; subjectIds: string[]; examDates: Record<string, string> }) =>
     set({ ...state, ...setup, onboarded: true }),
