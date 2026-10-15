@@ -7,6 +7,7 @@ import Logo from './Logo'
 
 const LINKS: { to: string; label: string; icon: IconName }[] = [
   { to: '/', label: 'Home', icon: 'home' },
+  { to: '/cards', label: 'Cards', icon: 'cards' },
   { to: '/progress', label: 'Progress', icon: 'chart' },
   { to: '/settings', label: 'Settings', icon: 'gear' },
 ]
@@ -52,7 +53,7 @@ export default function Layout() {
       </main>
 
       <nav aria-label="Main" className="tabbar md:hidden">
-        <div className="surface mx-auto grid max-w-md grid-cols-3 gap-1 !rounded-3xl p-1.5">
+        <div className="surface mx-auto grid max-w-md grid-cols-4 gap-1 !rounded-3xl p-1.5">
           {LINKS.map((l) => (
             <NavLink key={l.to} to={l.to} end onClick={() => sfx('tap')}
               className={({ isActive }) => `press flex flex-col items-center gap-0.5 rounded-2xl py-2 text-xs font-bold transition-colors ${isActive ? 'bg-white text-[var(--ink)]' : 'text-[var(--muted)]'}`}>

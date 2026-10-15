@@ -4,6 +4,7 @@
 - `home/Home.tsx` hero mission + today's plan + exam countdown. Exports `KIND` (mission colour/icon/route).
 - `session/Session.tsx` full-screen card review: confidence 1-5, reveal, rate with interval previews, keyboard 1-5/Space/1-4. Again re-queues the card.
 - `run/MissionRun.tsx` Brain Dump, Prove It (90 s timer), Past paper: brief -> work -> record -> logs via `actions.logMission`.
+- `flashcards/Flashcards.tsx` free-practice decks: one per spec topic (automatic card + real cards), flip, shuffle, arrow keys. Does not affect the review schedule.
 - `progress/Progress.tsx` retention headline, trend, 14-day chart, per-subject bars, confidence misses, paper marks. `progress/stats.ts` weekly retention (tested).
 - `settings/Settings.tsx` account, sound, my cards, theme, subjects + exam dates, resources incl. student-added links.
 - `help/Help.tsx` guide, FAQ, install tips, shortcuts; replay tour. Text lives in `content/guide.ts`.
