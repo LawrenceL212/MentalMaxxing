@@ -7,6 +7,7 @@ import { subjectById } from '../../content/subjects'
 import { sfx } from '../../lib/fx/sound'
 import { schoolOrder, topicId } from '../../lib/curriculum'
 import { organiserCardId, parseOrganiser } from '../../lib/organiser'
+import { detectTopics, spreadDates, type TopicMatch } from '../../lib/detect'
 import { deleteFile, getFile, MAX_FILE_BYTES, putFile } from '../../lib/files'
 import Icon from '../../ui/Icon'
 
@@ -69,7 +70,7 @@ const KNOW = [
 ]
 
 /** Learn a topic: read the key points, then say how well you know it. That feeds the fog map before any reviews exist. */
-function TopicPage({ subjectId, deck: opened, onClose }: { subjectId: string; deck: Deck; onClose: () => void }) {
+function TopicPage({ subjectId, deck: opened, onClose, onSwitch }: { subjectId: string; deck: Deck; onClose: () => void; onSwitch: (d: Deck) => void }) {
   const state = useAppState()
   // Re-read the deck so cards made from the organiser show up straight away.
   const deck = decksFor(state, subjectId).find((d) => d.topic === opened.topic) ?? opened
@@ -84,6 +85,14 @@ function TopicPage({ subjectId, deck: opened, onClose }: { subjectId: string; de
   const taughtAt = state.taught[key]
   const topicKey = /^\d/.test(deck.topic) ? deck.topic.split(' ')[0] : deck.topic.trim().toLowerCase()
   const parsed = parseOrganiser(org.text)
+
+  // If you add an organiser here you are obviously on this topic: mark it covered. If the text reads like a different topic, say so.
+  useEffect(() => {
+    if (org.text.trim().length >= 20 && !state.taught[key]) actions.setTaught(key, true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [org.text])
+  const looksLike = org.text.trim().length >= 30 ? detectTopics(org.text, { subjectIds: [subjectId] })[0] : undefined
+  const elsewhere = looksLike && looksLike.topic !== deck.topic && looksLike.score >= 0.3 ? decksFor(state, subjectId).find((d) => d.topic === looksLike.topic) : undefined
 
   useEffect(() => {
     let url = ''
@@ -204,10 +213,67 @@ function TopicPage({ subjectId, deck: opened, onClose }: { subjectId: string; de
           </div>
         )}
         <button type="button" className="btn btn-primary" disabled={!parsed.length} onClick={makeCards}>{parsed.length ? `Make ${parsed.length} flashcard${parsed.length === 1 ? '' : 's'} from this` : 'Paste lines like term: definition to make flashcards'}</button>
+        {elsewhere && (
+          <p className="flex flex-wrap items-center gap-2 rounded-xl bg-[var(--m-prove)] p-3 text-sm font-bold text-[var(--ink)]">
+            This reads like {elsewhere.topic}.
+            <button type="button" className="underline" onClick={() => onSwitch(elsewhere)}>Go to that topic</button>
+          </p>
+        )}
         {msg && <p role="status" className="text-sm font-bold">{msg}</p>}
       </section>
       {flipping && <DeckPlayer deck={deck} color={color} onClose={() => setFlipping(false)} />}
     </div>
+  )
+}
+
+/** Paste anything from class (notes, an organiser, a contents page) and the app works out which topics it is and marks them as covered. */
+function FindMyPlace() {
+  const state = useAppState()
+  const [text, setText] = useState('')
+  const [found, setFound] = useState<TopicMatch[] | null>(null)
+  const [picked, setPicked] = useState<Set<string>>(new Set())
+  const [done, setDone] = useState('')
+  const k = (m: TopicMatch) => `${m.subjectId}:${m.topic}`
+
+  function find() {
+    sfx('tap')
+    const m = detectTopics(text, { subjectIds: state.subjectIds, limit: 8 })
+    setFound(m)
+    setPicked(new Set(m.map(k)))
+    setDone('')
+  }
+  function mark() {
+    const chosen = (found ?? []).filter((m) => picked.has(k(m)) && !state.taught[k(m)])
+    const dates = spreadDates(chosen)
+    chosen.forEach((m) => actions.setTaught(k(m), true, dates.get(k(m))))
+    sfx('complete')
+    setDone(`Marked ${chosen.length} topic${chosen.length === 1 ? '' : 's'} as covered. Today's plan will use them.`)
+    setFound(null)
+    setText('')
+  }
+
+  return (
+    <details className="surface rise p-4">
+      <summary className="cursor-pointer font-bold">Where are you in class? Paste something and the app works it out</summary>
+      <div className="mt-3 grid gap-2">
+        <p className="text-sm">Paste a knowledge organiser, your notes, or a list of what you have done this term. The app matches it to the course and marks those topics as covered. Photos and PDFs cannot be read yet, so type or paste the text.</p>
+        <textarea className="field min-h-28" aria-label="Paste class content" value={text} onChange={(e) => setText(e.target.value)} placeholder="e.g. Mitochondria, ribosomes and the nucleus. Diffusion and osmosis. Mitosis and stem cells." />
+        <button type="button" className="btn btn-primary" disabled={text.trim().length < 10} onClick={find}>Find my place</button>
+        {found && (found.length === 0 ? <p role="status" className="text-sm font-bold">Could not match that to a topic. Try pasting more, or tick topics yourself below.</p> : (
+          <div className="grid gap-1.5" role="group" aria-label="Topics found">
+            {found.map((m) => (
+              <label key={k(m)} className="flex items-center gap-3 rounded-xl bg-[var(--raise2)] p-2.5 text-sm font-bold">
+                <input type="checkbox" className="size-5" checked={picked.has(k(m))} onChange={(e) => setPicked((p) => { const n = new Set(p); if (e.target.checked) n.add(k(m)); else n.delete(k(m)); return n })} />
+                <span className="flex-1"><span className="mono block text-[11px]">{subjectById(m.subjectId)?.name}</span>{m.topic}</span>
+                <span className="mono text-[11px]">{m.words.slice(0, 3).join(', ')}</span>
+              </label>
+            ))}
+            <button type="button" className="btn btn-light" disabled={picked.size === 0} onClick={mark}>Mark {picked.size} as covered</button>
+          </div>
+        ))}
+        {done && <p role="status" className="text-sm font-bold">{done}</p>}
+      </div>
+    </details>
   )
 }
 
@@ -258,7 +324,7 @@ export default function Study() {
   const taughtDecks = order.taught.map((t) => decks.find((d) => d.topic === t)).filter((d): d is Deck => Boolean(d))
   const otherDecks = decks.filter((d) => !order.taught.includes(d.topic))
 
-  if (open) return <TopicPage subjectId={subjectId} deck={open} onClose={() => setOpen(null)} />
+  if (open) return <TopicPage subjectId={subjectId} deck={open} onClose={() => setOpen(null)} onSwitch={(d) => setOpen(d)} />
 
   return (
     <div className="grid gap-4">
@@ -266,6 +332,8 @@ export default function Study() {
         <h1 className="text-4xl font-extrabold tracking-tight md:text-5xl">Study</h1>
         <p className="mt-2 font-medium">Pick a topic to learn it: key points, then flashcards. Tell the app how well you know it and your fog map fills in.</p>
       </section>
+
+      <FindMyPlace />
 
       <div className="flex flex-wrap gap-2" role="group" aria-label="Subject">
         {state.subjectIds.map((id) => {
@@ -288,6 +356,7 @@ export default function Study() {
               <TopicList decks={taughtDecks} subjectId={subjectId} onOpen={setOpen} numbered />
             </>
           )}
+          <p className="mono text-xs font-bold">{taughtDecks.length} of {decks.length} topics covered in class</p>
           <h2 className="label">{taughtDecks.length ? 'Coming up' : 'All topics'}</h2>
           {taughtDecks.length === 0 && <p className="text-sm">Open a topic and tick "We have covered this" as your class gets to it. The app then revises those first, in your school order.</p>}
           <TopicList decks={otherDecks} subjectId={subjectId} onOpen={setOpen} />
