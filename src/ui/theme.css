@@ -3,33 +3,114 @@
 /* Arctic is the default. Missions and ratings keep fixed colours across themes. */
 :root {
   color-scheme: dark;
-  --bg: #0a0f16; --raise: #162231; --raise2: #21324a; --line: #2c4058;
+  --bg: #080d14; --raise: #14202f; --raise2: #1d2d44; --line: #2a3d57;
   --text: #ffffff; --muted: #d3e3f3; --accent: #7cc4ff; --ink: #0b0d12;
   --m-queue: #39d7ff; --m-dump: #ff8a3d; --m-shuffle: #b38bff; --m-prove: #ffd43b; --m-paper: #ff5c8a;
   --r-again: #ff5c6c; --r-hard: #ffb13b; --r-good: #3ddc84; --r-easy: #39d7ff;
   --f-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
   --f-body: 'Atkinson Hyperlegible', ui-sans-serif, system-ui, sans-serif;
   --f-mono: 'Geist Mono', ui-monospace, Menlo, monospace;
+  --nav-h: 68px;
 }
-[data-theme='molten'] { --bg: #110d09; --raise: #251c13; --raise2: #35291c; --line: #4a3a27; --muted: #f1e2c6; --accent: #ffbe55; }
-[data-theme='obsidian'] { --bg: #060a09; --raise: #122019; --raise2: #1b3026; --line: #28453a; --muted: #cdf0e2; --accent: #46e8a8; }
+[data-theme='molten'] { --bg: #0e0b08; --raise: #221a12; --raise2: #33271a; --line: #4a3a27; --muted: #f1e2c6; --accent: #ffbe55; }
+[data-theme='obsidian'] { --bg: #050908; --raise: #10201a; --raise2: #1a2f26; --line: #28453a; --muted: #cdf0e2; --accent: #46e8a8; }
 
+html { background: var(--bg); }
 body {
   margin: 0;
-  background: var(--bg);
+  min-height: 100dvh;
   color: var(--text);
   font-family: var(--f-body);
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-top: env(safe-area-inset-top, 0px);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background:
+    radial-gradient(900px 520px at 88% -8%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 62%),
+    radial-gradient(760px 520px at -8% 108%, color-mix(in srgb, var(--m-shuffle) 14%, transparent), transparent 62%),
+    var(--bg);
+  background-attachment: fixed;
+  -webkit-tap-highlight-color: transparent;
 }
+/* Faint grid that fades out toward the bottom */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 36px 36px;
+  opacity: 0.22;
+  mask-image: radial-gradient(70% 45% at 50% 0%, #000, transparent);
+}
+#root { position: relative; }
+
 h1, h2, h3 { font-family: var(--f-display); }
 .mono { font-family: var(--f-mono); }
+.label { font-family: var(--f-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
 
-button { font: inherit; cursor: pointer; }
-button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+button, a { font: inherit; cursor: pointer; touch-action: manipulation; }
+button:disabled { cursor: not-allowed; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 2px;
 }
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+input, select, textarea { font: inherit; color: var(--text); }
+input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--muted) 65%, transparent); }
+
+/* Surfaces */
+.surface {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--raise) 100%, white 3%), var(--raise));
+  border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+  border-radius: 24px;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06), 0 18px 40px -24px rgb(0 0 0 / 0.7);
+}
+.field {
+  background: var(--raise2);
+  border: 1px solid transparent;
+  border-radius: 14px;
+  padding: 12px 14px;
+  width: 100%;
+}
+.field:focus { border-color: var(--accent); }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 10px; border-radius: 999px;
+  background: var(--raise2); font-family: var(--f-mono); font-size: 12px; font-weight: 700;
+}
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border: 0; border-radius: 16px; padding: 14px 18px; font-weight: 800; font-family: var(--f-display);
+  transition: transform 0.12s ease, filter 0.2s ease, box-shadow 0.2s ease;
+}
+.btn:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); }
+.btn:active:not(:disabled) { transform: scale(0.97); }
+.btn-primary { background: var(--accent); color: var(--ink); box-shadow: 0 10px 30px -10px var(--accent); }
+.btn-light { background: #fff; color: var(--ink); }
+.btn-dark { background: var(--ink); color: #fff; }
+.btn-ghost { background: var(--raise2); color: var(--text); }
+.btn:disabled { opacity: 0.35; }
+.press { transition: transform 0.12s ease; }
+.press:active { transform: scale(0.96); }
+
+/* Motion */
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes pop { from { opacity: 0; transform: scale(0.94) translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes glow { 0%, 100% { box-shadow: 0 0 0 0 transparent, 0 14px 40px -14px var(--mc, var(--accent)); } 50% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--mc, var(--accent)) 14%, transparent), 0 14px 56px -10px var(--mc, var(--accent)); } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+.rise { animation: rise 520ms cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i, 0) * 70ms); }
+.pop { animation: pop 380ms cubic-bezier(.2,.8,.2,1) both; }
+.glow { animation: glow 3.2s ease-in-out infinite; }
+.float { animation: float 5s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+
+/* Page column. On phones a fixed tab bar sits at the bottom, so main content leaves room for it. */
+.wrap { margin: 0 auto; width: 100%; max-width: 30rem; padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px)); }
+.main-pad { padding-block: 8px calc(var(--nav-h) + 28px + env(safe-area-inset-bottom, 0px)); }
+@media (min-width: 768px) { .wrap { max-width: 64rem; } .main-pad { padding-block: 12px 56px; } }
+.tabbar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+  padding: 24px max(12px, env(safe-area-inset-left, 0px)) calc(10px + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(180deg, transparent, var(--bg) 55%);
+  pointer-events: none;
+}
+.tabbar > div { pointer-events: auto; }

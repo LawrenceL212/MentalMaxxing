@@ -1,5 +1,10 @@
-# src/features/ one folder per screen, each exports a default component used by `App.tsx`
-- `home/Home.tsx` today's mission block (colour by mission kind), exam countdowns. Uses `lib/missions.pickMission`.
-- `session/Session.tsx` review flow: confidence 1-5, reveal, rate. Calls `actions.rate`. Snapshots the due queue on mount.
-- `progress/Progress.tsx` retention headline, "Are you improving?", per-subject bars. `progress/stats.ts` weekly retention maths (tested).
-- `settings/Settings.tsx` account (email + password: sign in, create account, forgot password), theme, my subjects + exam dates, revision resources incl. student-added links.
+# src/features/ one folder per screen or flow, default export used by `App.tsx`
+- `auth/Welcome.tsx` first screen for signed-out users: create account / sign in, remember me, no credential prefill, guest link.
+- `onboarding/Setup.tsx` year, subjects, exam dates (once). `onboarding/Tutorial.tsx` 6-step tour (also replayed from Help).
+- `home/Home.tsx` hero mission + today's plan + exam countdown. Exports `KIND` (mission colour/icon/route).
+- `session/Session.tsx` full-screen card review: confidence 1-5, reveal, rate with interval previews, keyboard 1-5/Space/1-4. Again re-queues the card.
+- `run/MissionRun.tsx` Brain Dump, Prove It (90 s timer), Past paper: brief -> work -> record -> logs via `actions.logMission`.
+- `flashcards/Flashcards.tsx` free-practice decks: one per spec topic (automatic card + real cards), flip, shuffle, arrow keys. Does not affect the review schedule.
+- `progress/Progress.tsx` retention headline, trend, 14-day chart, per-subject bars, confidence misses, paper marks. `progress/stats.ts` weekly retention (tested).
+- `settings/Settings.tsx` account, sound, my cards, theme, subjects + exam dates, resources incl. student-added links.
+- `help/Help.tsx` guide, FAQ, install tips, shortcuts; replay tour. Text lives in `content/guide.ts`.
