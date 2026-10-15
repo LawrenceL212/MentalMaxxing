@@ -15,15 +15,14 @@ npm run build    # production build into dist/
 
 Stack: Vite, React, TypeScript, Tailwind, Firebase (Auth + Firestore), installable as a PWA, hosted on GitHub Pages.
 
-## Set up Firebase
+## Firebase
 
-The app works offline from `localStorage` without Firebase. To turn on sign-in and sync across devices:
+The Firebase web config for project `mentalmaxxing-ff432` is committed in `.env`. These values only identify the project and are meant to be public. Student data is protected by `firestore.rules`, not by hiding the config. Without a config the app still works offline from `localStorage`.
 
-1. In the [Firebase console](https://console.firebase.google.com/project/mentalmaxxing-ff432/overview) open **Project settings > General > Your apps** and add a **Web app**. Copy its config values.
-2. Copy `.env.example` to `.env` and fill in `VITE_FIREBASE_API_KEY` and `VITE_FIREBASE_APP_ID` (the project ID and auth domain are already filled in).
-3. **Authentication > Sign-in method:** enable **Email/Password**. Under **Settings > Authorized domains** add `lawrencel212.github.io`.
-4. **Firestore Database:** this must be created in the console (Create database, production mode). Then publish the rules in `firestore.rules`, which let each student read and write only their own `users/{uid}` document.
-5. For deployment, add the same four values as repository **variables** (Settings > Secrets and variables > Actions > Variables) named `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`, `VITE_FIREBASE_PROJECT_ID`, `VITE_FIREBASE_APP_ID`. These identify the project and are safe to ship; the rules protect the data.
+One-time setup in the [Firebase console](https://console.firebase.google.com/project/mentalmaxxing-ff432/overview):
+
+1. **Authentication > Sign-in method:** enable **Email/Password**. Under **Settings > Authorized domains** add `lawrencel212.github.io`.
+2. **Firestore Database:** create the database, then publish the rules in `firestore.rules` (Rules tab > Publish). They let each student read and write only their own `users/{uid}` document.
 
 ## Deploy
 
