@@ -7,7 +7,7 @@ GCSE study scheduler (Bournemouth School students). PWA: Vite + React + TypeScri
 
 ## Map: read the CLAUDE.md in a folder before opening its files
 - `src/content/` static data: subjects, exam boards, revision links, sample cards
-- `src/features/` one folder per screen or flow: auth, onboarding, home, session, run, progress, settings, help
+- `src/features/` one folder per screen or flow: auth, onboarding, home, session, run, study, mock, progress, settings, help
 - `src/lib/srs/` spaced-repetition maths (SM-2)
 - `src/lib/store/` app state in localStorage
 - `src/lib/firebase/` Firebase init, email/password sign-in (remember me), Firestore sync
