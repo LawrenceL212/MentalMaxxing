@@ -70,7 +70,7 @@ export const CS: Record<string, Lesson> = {
       },
       {
         title: 'Units of data',
-        text: `A bit is one 0 or 1. 4 bits is a nibble. 8 bits is a byte.\nThen each unit is 1000 times the last: 1 kilobyte (kB) = 1000 bytes, 1 megabyte (MB) = 1000 kB, 1 gigabyte (GB) = 1000 MB, 1 terabyte (TB) = 1000 GB.\nExample: a 2 GB memory card holds 2000 MB, so 2000 / 4 = 500 photos of 4 MB each.`,
+        text: `A bit is one 0 or 1. 4 bits is a nibble. 8 bits is a byte.\nThen each unit is 1000 times the last: 1 kilobyte (kB) = 1000 bytes, 1 megabyte (MB) = 1000 kB, 1 gigabyte (GB) = 1000 MB, 1 terabyte (TB) = 1000 GB. OCR also accepts 1024 in calculations.\nExample: a 2 GB memory card holds 2000 MB, so 2000 / 4 = 500 photos of 4 MB each.`,
       },
       {
         title: 'Binary, denary, hex',
@@ -82,7 +82,7 @@ export const CS: Record<string, Lesson> = {
       },
       {
         title: 'Text, images and sound',
-        text: `Characters are stored as numbers using a character set. ASCII uses 7 bits (128 characters). Unicode uses more bits per character, so it can store emojis and other alphabets.\nAn image is a grid of pixels. Colour depth is the bits per pixel: 8 bits gives 256 colours. Resolution is the number of pixels.\nSound is sampled: the wave's height is measured many times a second. The sample rate is how many samples per second and the bit depth is the bits per sample.`,
+        text: `Characters are stored as numbers using a character set. Standard ASCII has 128 characters (OCR exams show ASCII with 8 bits). Unicode uses more bits per character, so it can store emojis and other alphabets.\nAn image is a grid of pixels. Colour depth is the bits per pixel: 8 bits gives 256 colours. Resolution is the number of pixels.\nSound is sampled: the wave's height is measured many times a second. The sample rate is how many samples per second and the bit depth is the bits per sample.`,
       },
       {
         title: 'Working out file sizes',
@@ -377,11 +377,11 @@ export const CS: Record<string, Lesson> = {
       },
       {
         title: 'Arrays and records',
-        text: `An array holds several items of one type under one name. Positions start at 0.\narray scores[5]\nscores[0] = 12\nscores[4] = 30\nThe five positions are 0 to 4. A loop is the usual way to go through an array: for i = 0 to 4 ... scores[i] ... next i.\nA two-dimensional array is like a grid, scores[row][column]. A database table holds records, one per row, with fields in columns.`,
+        text: `An array holds several items of one type under one name. Positions start at 0.\narray scores[5]\nscores[0] = 12\nscores[4] = 30\nThe five positions are 0 to 4. A loop is the usual way to go through an array: for i = 0 to 4 ... scores[i] ... next i.\nA two-dimensional array is like a grid, scores[row,column]. A database table holds records, one per row, with fields in columns.`,
       },
       {
         title: 'Files and SQL',
-        text: `Files let data survive after the program ends.\nmyFile = openRead("names.txt")\nwhile NOT myFile.endOfFile()\n  print(myFile.readLine())\nendwhile\nmyFile.close()\nUse openWrite and writeLine to save data.\nSQL queries a database:\nSELECT name FROM students WHERE year == 11\nThe * means all fields. Add ORDER BY to sort the results.`,
+        text: `Files let data survive after the program ends.\nmyFile = open("names.txt")\nwhile NOT myFile.endOfFile()\n  print(myFile.readLine())\nendwhile\nmyFile.close()\nUse newFile("out.txt") to create a file and writeLine to save data.\nSQL queries a database:\nSELECT name FROM students WHERE year = 11\nThe * means all fields. Add ORDER BY to sort the results.`,
       },
       {
         title: 'Subprograms',
@@ -393,7 +393,7 @@ export const CS: Record<string, Lesson> = {
       { q: `How many times does this loop run? for i = 2 to 6`, a: `5 times (i = 2, 3, 4, 5, 6).` },
       { q: `An array called names has 8 items. What is the index of the last item?`, a: `7, because indexes start at 0.` },
       { q: `State the difference between a function and a procedure.`, a: `A function returns a value to the code that called it; a procedure does not.` },
-      { q: `Write a SQL query to show every field for pupils whose house is "Red" from a table called pupils.`, a: `SELECT * FROM pupils WHERE house == "Red"` },
+      { q: `Write a SQL query to show every field for pupils whose house is "Red" from a table called pupils.`, a: `SELECT * FROM pupils WHERE house = "Red"` },
     ],
   },
 

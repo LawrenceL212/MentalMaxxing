@@ -53,7 +53,7 @@ export const MATHS: Record<string, Lesson> = {
       'Fractions: add and subtract need a common denominator; multiply across; divide by flipping the second fraction.',
       'Standard form is A × 10ⁿ with 1 ≤ A < 10. Indices: add when multiplying, subtract when dividing, multiply powers of powers.',
       'a⁰ = 1 and a⁻ⁿ = 1/aⁿ. Higher tier: a^(1/n) is the nth root, and surds like √12 simplify to 2√3.',
-      'Bounds: a value rounded to the nearest unit lies half a unit either side of it.',
+      'Error intervals: a value rounded to the nearest unit lies half a unit either side of it. Calculating with bounds is Higher tier.',
     ],
     steps: [
       {
@@ -86,7 +86,7 @@ export const MATHS: Record<string, Lesson> = {
       },
       {
         title: 'Rounding, estimating, bounds',
-        text: 'Significant figures start at the first non-zero digit: 0.047261 is 0.0473 to 3 s.f. Estimate by rounding each number to 1 s.f.: 4.9 × 19.8 ≈ 5 × 20 = 100.\nA length of 12 cm to the nearest cm has lower bound 11.5 and upper bound 12.5. Write the error interval as 11.5 ≤ L < 12.5.\nFor a rectangle 8 cm by 5 cm (each to the nearest cm): largest area = 8.5 × 5.5 = 46.75 and smallest = 7.5 × 4.5 = 33.75.\nHigher tier: for a ÷ b the lower bound uses the lower a and the upper b.',
+        text: 'Significant figures start at the first non-zero digit: 0.047261 is 0.0473 to 3 s.f. Estimate by rounding each number to 1 s.f.: 4.9 × 19.8 ≈ 5 × 20 = 100.\nA length of 12 cm to the nearest cm has lower bound 11.5 and upper bound 12.5. Write the error interval as 11.5 ≤ L < 12.5.\nHigher tier: for a rectangle 8 cm by 5 cm (each to the nearest cm), the largest area is 8.5 × 5.5 = 46.75 and the smallest is 7.5 × 4.5 = 33.75.\nHigher tier: for a ÷ b the lower bound uses the lower a and the upper b.',
       },
     ],
     check: [
@@ -102,7 +102,7 @@ export const MATHS: Record<string, Lesson> = {
       'Expand brackets by multiplying every term inside; factorise by taking out the common factor. x² − a² = (x + a)(x − a).',
       'Solve equations by doing the same to both sides. Flip an inequality sign when multiplying or dividing by a negative.',
       'Straight line: y = mx + c, where m is the gradient and c the y-intercept. Perpendicular gradients multiply to −1 (Higher).',
-      'Quadratics: factorise, or use x = (−b ± √(b² − 4ac)) ÷ 2a.',
+      'Quadratics: factorise, or (Higher) use x = (−b ± √(b² − 4ac)) ÷ 2a. The formula is not given on the paper.',
       'Simultaneous equations: eliminate one letter, then substitute back to find the other.',
     ],
     steps: [
@@ -132,7 +132,7 @@ export const MATHS: Record<string, Lesson> = {
       },
       {
         title: 'Quadratics',
-        text: 'Solve by factorising: x² − 5x + 6 = 0 gives (x − 2)(x − 3) = 0, so x = 2 or x = 3. Always rearrange to = 0 first.\nFormula, for ax² + bx + c = 0: x = (−b ± √(b² − 4ac)) ÷ 2a. For x² + 3x − 2 = 0: b² − 4ac = 9 + 8 = 17, so x = (−3 ± √17) ÷ 2, which is 0.56 or −3.56.\nThe graph is a U shape (or ∩ if the x² term is negative). The solutions are where it crosses the x-axis.\nHigher tier: completing the square. x² + 6x + 1 = (x + 3)² − 8, so the turning point is (−3, −8).',
+        text: 'Solve by factorising: x² − 5x + 6 = 0 gives (x − 2)(x − 3) = 0, so x = 2 or x = 3. Always rearrange to = 0 first.\nHigher tier formula (not given on the paper, so learn it), for ax² + bx + c = 0: x = (−b ± √(b² − 4ac)) ÷ 2a. For x² + 3x − 2 = 0: b² − 4ac = 9 + 8 = 17, so x = (−3 ± √17) ÷ 2, which is 0.56 or −3.56.\nThe graph is a U shape (or ∩ if the x² term is negative). The solutions are where it crosses the x-axis.\nHigher tier: completing the square. x² + 6x + 1 = (x + 3)² − 8, so the turning point is (−3, −8).',
       },
       {
         title: 'Simultaneous equations and functions',
@@ -220,7 +220,7 @@ export const MATHS: Record<string, Lesson> = {
       },
       {
         title: 'Volume and surface area',
-        text: 'Prism: area of cross-section × length. Cylinder: πr²h. For r = 3 cm and h = 10 cm, V = 90π = 282.7 cm³.\nCone: ⅓πr²h. Pyramid: ⅓ × base area × height. Sphere: 4/3πr³. These last three may be given on the paper, but learn them anyway.\nSphere with r = 3: V = 36π = 113.1 cm³. Cone with r = 3 and h = 4: V = 12π = 37.7 cm³.\nSurface area is the area of all the faces added up. A sphere has 4πr².',
+        text: 'Prism: area of cross-section × length. Cylinder: πr²h. For r = 3 cm and h = 10 cm, V = 90π = 282.7 cm³.\nCone: ⅓πr²h. Pyramid: ⅓ × base area × height. Sphere: 4/3πr³. The cone and sphere volumes are given on the paper (as are the cone curved surface area πrl and the sphere surface area 4πr²), but the pyramid volume is not, so learn it.\nSphere with r = 3: V = 36π = 113.1 cm³. Cone with r = 3 and h = 4: V = 12π = 37.7 cm³.\nSurface area is the area of all the faces added up. A sphere has 4πr².',
       },
       {
         title: 'Pythagoras and trigonometry',

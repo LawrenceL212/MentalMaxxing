@@ -37,7 +37,7 @@ export const PHYS: Record<string, Lesson> = {
       },
       {
         title: "Reducing unwanted transfers",
-        text: "Lubrication (oil) cuts friction, so less energy is dissipated as heat. Thermal insulation cuts heat loss from buildings.\nHigh thermal conductivity means energy passes through quickly. Thicker walls with a low thermal conductivity slow heat loss, so a house cools more slowly.\nThermal insulation practical: wrap identical beakers of hot water in different materials, or use different thicknesses, and record the temperature fall every minute. Keep the water volume, starting temperature and lid the same.",
+        text: "Lubrication (oil) cuts friction, so less energy is dissipated as heat. Thermal insulation cuts heat loss from buildings.\nHigh thermal conductivity means energy passes through quickly. Thicker walls with a low thermal conductivity slow heat loss, so a house cools more slowly.\nPhysics only required practical, thermal insulation: wrap identical beakers of hot water in different materials, or use different thicknesses, and record the temperature fall every minute. Keep the water volume, starting temperature and lid the same.",
       },
       {
         title: "Energy resources",
@@ -91,8 +91,8 @@ export const PHYS: Record<string, Lesson> = {
         text: "UK mains is alternating current (a.c.): the direction reverses 50 times a second (50 Hz). A cell gives direct current (d.c.), which flows one way only.\nThree-pin plug: live (brown) carries the 230 V, neutral (blue) completes the circuit, earth (green and yellow stripes) is a safety wire. If a fault makes the metal case live, a big current flows to earth and the fuse melts.\nThe live wire is dangerous even when the switch is off, because it is at high potential.",
       },
       {
-        title: "Static electricity",
-        text: "Rubbing two insulators transfers electrons from one surface to the other. The one that gains electrons becomes negative and the other positive.\nLike charges repel, opposite charges attract. A charged object also attracts small uncharged objects.\nSparks happen when charge builds up and the potential difference between an object and earth gets large enough to ionise the air.\nPhysics only: a charged object has an electric field around it. The force on another charge gets stronger the closer it is.",
+        title: "Physics only: static electricity",
+        text: "Physics only: rubbing two insulators transfers electrons from one surface to the other. The one that gains electrons becomes negative and the other positive.\nLike charges repel, opposite charges attract. A charged object also attracts small uncharged objects.\nSparks happen when charge builds up and the potential difference between an object and earth gets large enough to ionise the air.\nElectric field: a charged object has a field around it. The force on another charge gets stronger the closer it is.",
       },
     ],
     check: [
@@ -139,11 +139,11 @@ export const PHYS: Record<string, Lesson> = {
       },
       {
         title: "Gas pressure and temperature",
-        text: "Gas particles hit the walls of the container. Each collision gives a tiny force, and many collisions make a steady pressure.\nHeating a gas in a sealed container makes particles faster, so they hit harder and more often: pressure rises. Raising the temperature of a gas raises the average kinetic energy of its particles.\nIn a smaller volume the particles hit the walls more often, so the pressure is higher at constant temperature.",
+        text: "Gas particles hit the walls of the container. Each collision gives a tiny force, and many collisions make a steady pressure.\nHeating a gas in a sealed container makes particles faster, so they hit harder and more often: pressure rises. Raising the temperature of a gas raises the average kinetic energy of its particles.\nPhysics only: in a smaller volume the particles hit the walls more often, so the pressure is higher at constant temperature.",
       },
       {
         title: "Physics only: pV = constant",
-        text: "Physics only: for a fixed mass of gas at constant temperature, pressure × volume = constant.\nExample: 2 m³ of gas at 100 kPa is squeezed to 1 m³. p × V = 100 × 2 = 200, so the new pressure = 200 ÷ 1 = 200 kPa.\nCompressing a gas does work on it, and that energy raises its internal energy, so a bicycle pump gets warm.",
+        text: "Physics only: for a fixed mass of gas at constant temperature, pressure × volume = constant.\nExample: 2 m³ of gas at 100 kPa is squeezed to 1 m³. p × V = 100 × 2 = 200, so the new pressure = 200 ÷ 1 = 200 kPa.\nHigher tier: compressing a gas does work on it, and that energy raises its internal energy, so a bicycle pump gets warm.",
       },
     ],
     check: [
@@ -186,7 +186,7 @@ export const PHYS: Record<string, Lesson> = {
       },
       {
         title: "Half-life",
-        text: "Decay is random: you cannot say when one nucleus will decay, but you can predict how many decay in a given time.\nHalf-life is the time for the activity (count rate) to halve. Activity is measured in becquerels (Bq).\nExample: a sample has activity 800 Bq and half-life 2 hours. After 2 h: 400. After 4 h: 200. After 6 h: 100 Bq, which is 3 half-lives. The ratio of final to starting activity is 100 ÷ 800 = 1 ÷ 8.",
+        text: "Decay is random: you cannot say when one nucleus will decay, but you can predict how many decay in a given time.\nHalf-life is the time for the activity (count rate) to halve. Activity is measured in becquerels (Bq).\nExample: a sample has activity 800 Bq and half-life 2 hours. After 2 h: 400. After 4 h: 200. After 6 h: 100 Bq, which is 3 half-lives. Higher tier: the net decline can be written as a ratio, 100 ÷ 800 = 1 ÷ 8.",
       },
       {
         title: "Contamination, irradiation and background",
@@ -220,12 +220,8 @@ export const PHYS: Record<string, Lesson> = {
         text: "Distance, speed, mass and energy are scalars. Displacement, velocity, force and acceleration are vectors.\nThe resultant force is the overall force. If forces act along a line, add the ones in one direction and subtract the opposite ones. Pulling 12 N right and 5 N left gives a resultant of 7 N to the right.\nWeight = mass × g. A 60 kg person has weight 60 × 9.8 = 588 N.",
       },
       {
-        title: "Work done and springs",
-        text: "Work done = force × distance moved in the direction of the force (J). Pushing with 50 N for 4 m does 50 × 4 = 200 J. Work against friction mainly becomes thermal energy.\nHooke's law: force = spring constant × extension. A spring stretched 0.1 m by 5 N has k = 5 ÷ 0.1 = 50 N/m. Extension is how far it stretches, not its total length.\nPast the limit of proportionality the spring no longer stretches in proportion to the force.",
-      },
-      {
-        title: "Required practical: springs",
-        text: "Hang a spring from a clamp, measure its original length with a ruler at eye level, add masses (weight = mg), and measure the length each time. Extension = new length − original length.\nPlot force against extension. A straight line through the origin shows proportionality, and the gradient is k. The graph curves once the limit is passed.\nUse a pointer at the bottom of the spring to read the ruler more precisely.",
+        title: "Work done, springs and the springs practical",
+        text: "Work done = force × distance moved in the direction of the force (J). Pushing with 50 N for 4 m does 50 × 4 = 200 J. Work against friction mainly becomes thermal energy.\nHooke's law: force = spring constant × extension. A spring stretched 0.1 m by 5 N has k = 5 ÷ 0.1 = 50 N/m. Extension is how far it stretches, not its total length.\nPast the limit of proportionality the spring no longer stretches in proportion to the force.\nRequired practical: hang a spring from a clamp, measure its original length with a ruler at eye level, add masses (weight = mg), and measure the length each time. Extension = new length − original length.\nPlot force against extension. A straight line through the origin shows proportionality, and the gradient is k. The graph curves once the limit is passed.\nUse a pointer at the bottom of the spring to read the ruler more precisely.",
       },
       {
         title: "Physics only: moments",
@@ -233,19 +229,23 @@ export const PHYS: Record<string, Lesson> = {
       },
       {
         title: "Physics only: pressure",
-        text: "Physics only: pressure (Pa) = force (N) ÷ area (m²). A 600 N person on 0.03 m² of boot sole produces 600 ÷ 0.03 = 20 000 Pa. Spreading the force over a bigger area reduces the pressure.\nPressure in a liquid = height × density × g. At 2 m depth in water (1000 kg/m³): 2 × 1000 × 9.8 = 19 600 Pa. It increases with depth, and a liquid pushes in all directions.\nAtmospheric pressure falls with altitude because there is less air above you.",
+        text: "Physics only: pressure (Pa) = force (N) ÷ area (m²). A 600 N person on 0.03 m² of boot sole produces 600 ÷ 0.03 = 20 000 Pa. Spreading the force over a bigger area reduces the pressure.\nHigher tier: pressure in a liquid = height × density × g. At 2 m depth in water (1000 kg/m³): 2 × 1000 × 9.8 = 19 600 Pa. It increases with depth, and a liquid pushes in all directions.\nAtmospheric pressure falls with altitude because there is less air above you.",
       },
       {
         title: "Speed, acceleration and graphs",
-        text: "Speed = distance ÷ time. A runner covering 150 m in 30 s moves at 5 m/s.\nAcceleration = change in velocity ÷ time. A car going from 0 to 12 m/s in 4 s has acceleration 12 ÷ 4 = 3 m/s².\nAlso v² − u² = 2as. With u = 0, a = 3 and s = 24: v² = 2 × 3 × 24 = 144, so v = 12 m/s.\nOn a distance-time graph, the gradient is speed. On a velocity-time graph, the gradient is acceleration and the area under the line is distance. Accelerating from 0 to 8 m/s in 4 s then steady for 6 s: ½ × 4 × 8 + 8 × 6 = 16 + 48 = 64 m.",
+        text: "Speed = distance ÷ time. A runner covering 150 m in 30 s moves at 5 m/s.\nAcceleration = change in velocity ÷ time. A car going from 0 to 12 m/s in 4 s has acceleration 12 ÷ 4 = 3 m/s².\nAlso v² − u² = 2as. With u = 0, a = 3 and s = 24: v² = 2 × 3 × 24 = 144, so v = 12 m/s.\nOn a distance-time graph, the gradient is speed. Higher tier: on a velocity-time graph, the gradient is acceleration and the area under the line is distance. Accelerating from 0 to 8 m/s in 4 s then steady for 6 s: ½ × 4 × 8 + 8 × 6 = 16 + 48 = 64 m.",
       },
       {
         title: "Newton's laws and the acceleration practical",
-        text: "First law: with no resultant force, an object stays still or keeps moving at constant velocity.\nSecond law: F = ma. A 1200 kg car with a resultant force of 3000 N accelerates at 3000 ÷ 1200 = 2.5 m/s². Mass resists acceleration (inertia).\nThird law: when A pushes on B, B pushes back on A with an equal and opposite force. The two forces act on different objects.\nPractical: pull a trolley with a falling weight and time it with light gates. To change force, move masses from the trolley to the hanger so total mass stays the same. Acceleration is proportional to force.",
+        text: "First law: with no resultant force, an object stays still or keeps moving at constant velocity.\nSecond law: F = ma. A 1200 kg car with a resultant force of 3000 N accelerates at 3000 ÷ 1200 = 2.5 m/s². Higher tier: mass resists acceleration (inertia).\nThird law: when A pushes on B, B pushes back on A with an equal and opposite force. The two forces act on different objects.\nPractical: pull a trolley with a falling weight and time it with light gates. To change force, move masses from the trolley to the hanger so total mass stays the same. Acceleration is proportional to force.",
       },
       {
         title: "Terminal velocity and stopping distance",
-        text: "A falling skydiver speeds up, air resistance grows, until it equals weight. The resultant force is then zero, so the speed stays constant: terminal velocity. Opening the parachute raises the drag, slowing them to a new, lower terminal velocity.\nStopping distance = thinking distance + braking distance. Thinking distance rises with speed and with tiredness, drugs, alcohol or distractions. Braking distance rises with speed, wet roads, worn tyres or brakes.\nBraking turns kinetic energy into heat, so a bigger deceleration means higher forces and risk.\nPhysics only: momentum = mass × velocity (kg m/s). A 1000 kg car at 15 m/s has 15 000 kg m/s. In a closed system, total momentum before = total momentum after. A 2 kg trolley at 3 m/s sticking to a 1 kg trolley at rest: 6 = 3v, so v = 2 m/s. Force = change in momentum ÷ time.",
+        text: "A falling skydiver speeds up, air resistance grows, until it equals weight. The resultant force is then zero, so the speed stays constant: terminal velocity. Opening the parachute raises the drag, slowing them to a new, lower terminal velocity.\nStopping distance = thinking distance + braking distance. Thinking distance rises with speed and with tiredness, drugs, alcohol or distractions. Braking distance rises with speed, wet roads, worn tyres or brakes.\nBraking turns kinetic energy into heat, so a bigger deceleration means higher forces and risk.",
+      },
+      {
+        title: "Physics only, Higher tier: momentum",
+        text: "Physics only, Higher tier: momentum = mass × velocity (kg m/s). A 1000 kg car at 15 m/s has 15 000 kg m/s. In a closed system, total momentum before = total momentum after. A 2 kg trolley at 3 m/s sticking to a 1 kg trolley at rest: 6 = 3v, so v = 2 m/s. Force = change in momentum ÷ time, F = Δp ÷ t, so a longer stopping time means a smaller force.",
       },
     ],
     check: [
@@ -253,7 +253,7 @@ export const PHYS: Record<string, Lesson> = {
       { q: "A spring has k = 80 N/m. What force stretches it by 0.15 m?", a: "F = ke = 80 × 0.15 = 12 N." },
       { q: "A 1500 kg car accelerates at 2 m/s². What resultant force acts on it?", a: "F = ma = 1500 × 2 = 3000 N." },
       { q: "Explain why a skydiver reaches terminal velocity.", a: "Air resistance increases with speed until it equals weight. The resultant force is zero, so there is no further acceleration and the speed is constant." },
-      { q: "Physics only: a 0.5 kg ball moving at 8 m/s is stopped in 0.2 s. Find the force.", a: "Change in momentum = 0.5 × 8 = 4 kg m/s. Force = 4 ÷ 0.2 = 20 N." },
+      { q: "Physics only, Higher tier: a 0.5 kg ball moving at 8 m/s is stopped in 0.2 s. Find the force.", a: "Change in momentum = 0.5 × 8 = 4 kg m/s. Force = 4 ÷ 0.2 = 20 N." },
     ],
   },
 
@@ -280,11 +280,11 @@ export const PHYS: Record<string, Lesson> = {
       },
       {
         title: "Reflection and refraction",
-        text: "Reflection: the angle of incidence equals the angle of reflection, both measured from the normal (a line at 90° to the surface). A smooth surface gives a clear mirror image; a rough one scatters light.\nRefraction: a wave changes speed when it crosses into another medium. Going into a denser material (air to glass), light slows and bends towards the normal. Leaving, it speeds up and bends away. Along the normal there is no bend.\nWaves are transmitted, absorbed or reflected in different amounts depending on the material.",
+        text: "Reflection: the angle of incidence equals the angle of reflection, both measured from the normal (a line at 90° to the surface). Physics only: a smooth surface gives a clear mirror image (specular reflection); a rough one scatters light (diffuse reflection).\nRefraction: a wave changes speed when it crosses into another medium. Going into a denser material (air to glass), light slows and bends towards the normal. Leaving, it speeds up and bends away. Along the normal there is no bend.\nWaves are transmitted, absorbed or reflected in different amounts depending on the material.",
       },
       {
         title: "The electromagnetic spectrum",
-        text: "EM waves are transverse and travel at 3 × 10⁸ m/s in a vacuum. Increasing frequency (and decreasing wavelength): radio, microwave, infrared, visible light, ultraviolet, X-rays, gamma rays.\nExample: a radio wave with f = 1.5 × 10⁸ Hz has λ = 3 × 10⁸ ÷ 1.5 × 10⁸ = 2 m.\nRadio waves are made by alternating currents in a transmitter and produce alternating currents of the same frequency when absorbed by a receiver. Gamma rays come from changes in the nucleus.",
+        text: "EM waves are transverse and travel at 3 × 10⁸ m/s in a vacuum. Increasing frequency (and decreasing wavelength): radio, microwave, infrared, visible light, ultraviolet, X-rays, gamma rays.\nExample: a radio wave with f = 1.5 × 10⁸ Hz has λ = 3 × 10⁸ ÷ 1.5 × 10⁸ = 2 m.\nHigher tier: radio waves are made by alternating currents in a transmitter and produce alternating currents of the same frequency when absorbed by a receiver. Gamma rays come from changes in the nucleus.",
       },
       {
         title: "Uses and dangers",
@@ -296,7 +296,7 @@ export const PHYS: Record<string, Lesson> = {
       },
       {
         title: "Physics only: lenses and sound",
-        text: "Physics only: a convex lens brings parallel rays together at the principal focus. A concave lens spreads them out. A real image can be put on a screen; a virtual image cannot. Magnification = image height ÷ object height: a 4 mm object giving a 20 mm image has magnification 5.\nSound waves are longitudinal. Humans hear 20 Hz to 20 000 Hz; ultrasound is above 20 000 Hz and is used for medical scanning and for finding flaws.\nSeismic P waves are longitudinal and pass through solids and liquids; S waves are transverse and only pass through solids.",
+        text: "Physics only: a convex lens brings parallel rays together at the principal focus. A concave lens spreads them out. A real image can be put on a screen; a virtual image cannot. Magnification = image height ÷ object height: a 4 mm object giving a 20 mm image has magnification 5.\nSound waves are longitudinal. Higher tier: humans hear 20 Hz to 20 000 Hz; ultrasound is above 20 000 Hz and is used for medical scanning and for finding flaws.\nHigher tier: seismic P waves are longitudinal and pass through solids and liquids; S waves are transverse and only pass through solids.",
       },
     ],
     check: [
@@ -312,9 +312,9 @@ export const PHYS: Record<string, Lesson> = {
     keyPoints: [
       "Like poles repel and unlike poles attract. Field lines run from north to south and are closer where the field is stronger.",
       "A current in a wire creates a magnetic field. A solenoid with an iron core makes a strong electromagnet.",
-      "Motor effect: force (N) = magnetic flux density (T) × current (A) × length (m), so F = BIl.",
-      "Physics only: moving a wire in a magnetic field, or changing the field, induces a potential difference.",
-      "Physics only: transformer equation: Vp ÷ Vs = Np ÷ Ns. The National Grid uses high voltage to cut energy loss.",
+      "Higher tier: motor effect, force (N) = magnetic flux density (T) × current (A) × length (m), so F = BIl.",
+      "Physics only, Higher tier: moving a wire in a magnetic field, or changing the field, induces a potential difference.",
+      "Physics only, Higher tier: transformer equation: Vp ÷ Vs = Np ÷ Ns. The National Grid uses high voltage to cut energy loss.",
     ],
     steps: [
       {
@@ -330,32 +330,32 @@ export const PHYS: Record<string, Lesson> = {
         text: "A current in a wire creates a magnetic field made of circles around the wire. The field is stronger with more current and closer to the wire. Reversing the current reverses the field direction.\nCoiling the wire into a solenoid makes the fields add up to a strong, uniform field inside, like a bar magnet. Adding an iron core makes an electromagnet stronger.\nYou can make it stronger with more current or more turns, and switch it off by stopping the current.",
       },
       {
-        title: "The motor effect",
-        text: "A wire with a current at right angles to a magnetic field feels a force. Fleming's left-hand rule gives its direction: first finger = field, second finger = current, thumb = force.\nForce = flux density × current × length. With B = 0.2 T, I = 5 A and l = 0.1 m: F = 0.2 × 5 × 0.1 = 0.1 N.\nReversing the current or the field reverses the force. A wire parallel to the field feels no force.",
+        title: "Higher tier: the motor effect",
+        text: "Higher tier: a wire with a current at right angles to a magnetic field feels a force. Higher tier: Fleming's left-hand rule gives its direction: first finger = field, second finger = current, thumb = force.\nForce = flux density × current × length. With B = 0.2 T, I = 5 A and l = 0.1 m: F = 0.2 × 5 × 0.1 = 0.1 N.\nReversing the current or the field reverses the force. A wire parallel to the field feels no force.",
       },
       {
-        title: "Electric motors",
-        text: "In a d.c. motor a coil sits between two magnets. The current runs one way up one side of the coil and the opposite way on the other, so the forces on the sides are opposite, and the coil spins.\nA split-ring commutator swaps the connection every half turn so the coil keeps turning in the same direction.\nA faster spin can come from more current, a stronger field or more turns.",
+        title: "Higher tier: electric motors",
+        text: "Higher tier: in a d.c. motor a coil sits between two magnets. The current runs one way up one side of the coil and the opposite way on the other, so the forces on the sides are opposite, and the coil spins.\nA split-ring commutator swaps the connection every half turn so the coil keeps turning in the same direction.\nA faster spin can come from more current, a stronger field or more turns.",
       },
       {
-        title: "Physics only: induction and generators",
-        text: "Physics only: moving a wire across a magnetic field, or changing the field through a coil, induces a potential difference. If the circuit is complete, a current flows. This is the generator effect.\nA bigger induced potential difference comes from faster movement, a stronger magnet, or more turns. Reversing the movement reverses the direction.\nAn a.c. generator is a coil rotating in a field, and slip rings carry the current out. Microphones and loudspeakers use these effects, with a coil attached to a diaphragm.",
+        title: "Physics only, Higher tier: induction and generators",
+        text: "Physics only, Higher tier: moving a wire across a magnetic field, or changing the field through a coil, induces a potential difference. If the circuit is complete, a current flows. This is the generator effect.\nA bigger induced potential difference comes from faster movement, a stronger magnet, or more turns. Reversing the movement reverses the direction.\nAn a.c. generator is a coil rotating in a field, and slip rings carry the current out. Microphones and loudspeakers use these effects, with a coil attached to a diaphragm.",
       },
       {
-        title: "Physics only: transformers",
-        text: "Physics only: a transformer has a primary coil and secondary coil on an iron core. A changing current in the primary creates a changing field in the core, which induces a potential difference in the secondary. It only works with a.c.\nVp ÷ Vs = Np ÷ Ns. A 230 V supply on 1000 primary turns with 100 secondary turns gives Vs = 230 × 100 ÷ 1000 = 23 V. A step-up transformer has more turns on the secondary; step-down has fewer.\nFor a 100% efficient transformer, Vs × Is = Vp × Ip. If the secondary delivers 2 A at 23 V (46 W), the primary current = 46 ÷ 230 = 0.2 A.",
+        title: "Physics only, Higher tier: transformers",
+        text: "Physics only, Higher tier: a transformer has a primary coil and secondary coil on an iron core. A changing current in the primary creates a changing field in the core, which induces a potential difference in the secondary. It only works with a.c.\nVp ÷ Vs = Np ÷ Ns. A 230 V supply on 1000 primary turns with 100 secondary turns gives Vs = 230 × 100 ÷ 1000 = 23 V. A step-up transformer has more turns on the secondary; step-down has fewer.\nFor a 100% efficient transformer, Vs × Is = Vp × Ip. If the secondary delivers 2 A at 23 V (46 W), the primary current = 46 ÷ 230 = 0.2 A.",
       },
       {
-        title: "Physics only: the National Grid",
-        text: "Physics only: power stations send electricity through step-up transformers to a high voltage (about 400 000 V). For the same power, a higher voltage means a lower current, and a lower current wastes less energy as heat in the wires (P = I²R).\nStep-down transformers then reduce the voltage near homes to a safe 230 V.\nThis is why overhead cables use high voltage even though it is dangerous.",
+        title: "The National Grid",
+        text: "Power stations send electricity through step-up transformers to a high voltage (about 400 000 V). For the same power, a higher voltage means a lower current, and a lower current wastes less energy as heat in the wires (P = I²R).\nStep-down transformers then reduce the voltage near homes to a safe 230 V.\nThis is why overhead cables use high voltage even though it is dangerous.",
       },
     ],
     check: [
       { q: "Name two ways to increase the strength of an electromagnet.", a: "Increase the current; add more turns; add an iron core." },
-      { q: "A 0.2 m wire carrying 3 A is at right angles to a 0.5 T field. Find the force.", a: "F = BIl = 0.5 × 3 × 0.2 = 0.3 N." },
-      { q: "What does a split-ring commutator do in a motor?", a: "It reverses the current in the coil every half turn so the coil keeps rotating in the same direction." },
-      { q: "Physics only: a transformer has 500 primary turns and 2000 secondary turns. The primary is 12 V. Find the secondary voltage.", a: "Vs = 12 × 2000 ÷ 500 = 48 V (a step-up transformer)." },
-      { q: "Physics only: why does the National Grid transmit at high voltage?", a: "A high voltage means a lower current for the same power, so less energy is lost as heat in the cables." },
+      { q: "Higher tier: a 0.2 m wire carrying 3 A is at right angles to a 0.5 T field. Find the force.", a: "F = BIl = 0.5 × 3 × 0.2 = 0.3 N." },
+      { q: "Higher tier: what does a split-ring commutator do in a motor?", a: "It reverses the current in the coil every half turn so the coil keeps rotating in the same direction." },
+      { q: "Physics only, Higher tier: a transformer has 500 primary turns and 2000 secondary turns. The primary is 12 V. Find the secondary voltage.", a: "Vs = 12 × 2000 ÷ 500 = 48 V (a step-up transformer)." },
+      { q: "Why does the National Grid transmit at high voltage?", a: "A high voltage means a lower current for the same power, so less energy is lost as heat in the cables." },
     ],
   },
 
@@ -374,7 +374,7 @@ export const PHYS: Record<string, Lesson> = {
       },
       {
         title: "Physics only: orbits",
-        text: "Physics only: planets orbit the Sun and moons orbit planets in nearly circular paths. Satellites, natural (the Moon) or man-made, orbit the Earth.\nThe force of gravity points towards the centre, so the direction of velocity keeps changing even if the speed is constant. A changing direction means the velocity (a vector) changes, so the object is accelerating.\nFor a stable orbit at a given radius there is only one speed. A closer orbit means a faster speed. If a satellite speeds up, it moves into a larger orbit.",
+        text: "Physics only: planets orbit the Sun and moons orbit planets in nearly circular paths. Satellites, natural (the Moon) or man-made, orbit the Earth.\nThe force of gravity points towards the centre. Higher tier: this changes the direction of the velocity even if the speed is constant. A changing direction means the velocity (a vector) changes, so the object is accelerating.\nHigher tier: for a stable orbit at a given radius there is only one speed, so if the speed changes the radius must change. A closer orbit means a faster speed.",
       },
       {
         title: "Physics only: forming a star",
@@ -402,7 +402,7 @@ export const PHYS: Record<string, Lesson> = {
       },
     ],
     check: [
-      { q: "Physics only: why does an object in a circular orbit accelerate even at constant speed?", a: "Its direction keeps changing, so its velocity changes. Acceleration is the rate of change of velocity." },
+      { q: "Physics only, Higher tier: why does an object in a circular orbit accelerate even at constant speed?", a: "Its direction keeps changing, so its velocity changes. Acceleration is the rate of change of velocity." },
       { q: "Physics only: what balances the star's gravity while it is stable?", a: "The outward pressure from the energy released in nuclear fusion." },
       { q: "Physics only: put in order: red giant, protostar, white dwarf, main sequence (for a star like the Sun).", a: "Protostar (nebula), main sequence, red giant, white dwarf." },
       { q: "Physics only: what does red-shift tell us about distant galaxies?", a: "They are moving away from us, and farther galaxies are receding faster, so the Universe is expanding." },

@@ -138,8 +138,8 @@ export const BIO: Record<string, Lesson> = {
         text: 'Some drugs came from plants (digitalis from foxgloves for the heart, aspirin from willow) or microorganisms (penicillin from mould, found by Alexander Fleming). Now most are synthesised by chemists.\nNew drugs are tested for toxicity, side effects and dose. Preclinical trials use cells, tissues and animals. Clinical trials use healthy volunteers at low doses, then patients.\nIn a double-blind trial, neither the patient nor the doctor knows who gets the real drug or a placebo, which removes bias.',
       },
       {
-        title: 'Biology only: monoclonal antibodies',
-        text: 'Biology only: Monoclonal antibodies are identical antibodies from one clone of cells. A mouse is given the antigen, and its lymphocytes are fused with tumour cells to make hybridoma cells. These divide forever and secrete one type of antibody.\nUses: pregnancy tests (they bind to the hormone hCG), diagnosing disease, locating a substance in a cell or tissue, and treating cancer by carrying a drug or radioactive substance to cancer cells. Side effects have been worse than first hoped.',
+        title: 'Biology only (Higher): monoclonal antibodies',
+        text: 'Biology only (Higher): Monoclonal antibodies are identical antibodies from one clone of cells. A mouse is given the antigen, and its lymphocytes are fused with tumour cells to make hybridoma cells. These divide forever and secrete one type of antibody.\nUses: pregnancy tests (they bind to the hormone hCG), diagnosing disease, locating a substance in a cell or tissue, and treating cancer by carrying a drug or radioactive substance to cancer cells. Side effects have been worse than first hoped.',
       },
       {
         title: 'Biology only: plant disease and microbes',
@@ -174,7 +174,7 @@ export const BIO: Record<string, Lesson> = {
       },
       {
         title: 'Light intensity practical',
-        text: 'Use a piece of pondweed in water, with a lamp at a measured distance. Count bubbles of oxygen released per minute, or collect the gas in a syringe.\nMove the lamp to different distances and repeat each three times. Control temperature (a heat shield or water bath), carbon dioxide (add sodium hydrogencarbonate) and size of the weed.\nBiology only (Higher): light intensity is proportional to 1 ÷ distance². Doubling the distance makes the light intensity one quarter. Rate depends on intensity, so a graph of rate against 1/d² gives a straight line until another factor limits.',
+        text: 'Use a piece of pondweed in water, with a lamp at a measured distance. Count bubbles of oxygen released per minute, or collect the gas in a syringe.\nMove the lamp to different distances and repeat each three times. Control temperature (a heat shield or water bath), carbon dioxide (add sodium hydrogencarbonate) and size of the weed.\nHigher tier: light intensity is proportional to 1 ÷ distance². Doubling the distance makes the light intensity one quarter. Rate depends on intensity, so a graph of rate against 1/d² gives a straight line until another factor limits.',
       },
       {
         title: 'Uses of glucose in plants',
@@ -202,7 +202,7 @@ export const BIO: Record<string, Lesson> = {
       { q: 'A graph of photosynthesis rate against light intensity levels off. Suggest why.', a: 'Light is no longer limiting; another factor, such as carbon dioxide concentration or temperature, is now in short supply.' },
       { q: 'Explain why anaerobic respiration releases less energy than aerobic respiration.', a: 'Glucose is only partly broken down (to lactic acid or ethanol) instead of fully oxidised to carbon dioxide and water.' },
       { q: 'Why do you keep breathing heavily after finishing a sprint?', a: 'To repay the oxygen debt: oxygen is needed to break down the lactic acid built up during anaerobic respiration.' },
-      { q: 'Biology only (Higher): a lamp is moved from 10 cm to 20 cm from pondweed. How does the light intensity change?', a: 'Distance doubles, so intensity is divided by 2² = 4. It falls to a quarter.' },
+      { q: 'Higher tier: a lamp is moved from 10 cm to 20 cm from pondweed. How does the light intensity change?', a: 'Distance doubles, so intensity is divided by 2² = 4. It falls to a quarter.' },
     ],
   },
 
@@ -233,7 +233,7 @@ export const BIO: Record<string, Lesson> = {
       },
       {
         title: 'Reproductive hormones',
-        text: 'At puberty, testosterone (from the testes) and oestrogen (from the ovaries) cause secondary sexual characteristics.\nThe menstrual cycle lasts about 28 days. Day 1 is the start of bleeding when the lining of the uterus breaks down. The lining then rebuilds. An egg is released at about day 14 (ovulation).\nFSH from the pituitary makes an egg mature and stimulates oestrogen. LH triggers ovulation. Progesterone, from the empty follicle, maintains the lining.\nContraception: the pill (oestrogen and progesterone) stops FSH release so eggs do not mature; barrier methods such as condoms also prevent STIs. IVF uses FSH and LH to stimulate eggs, which are fertilised in a lab and the embryos placed in the uterus. It is expensive and can be stressful with a low success rate.',
+        text: 'At puberty, testosterone (from the testes) and oestrogen (from the ovaries) cause secondary sexual characteristics.\nThe menstrual cycle lasts about 28 days. Day 1 is the start of bleeding when the lining of the uterus breaks down. The lining then rebuilds. An egg is released at about day 14 (ovulation).\nFSH from the pituitary makes an egg mature and stimulates oestrogen. LH triggers ovulation. Progesterone, from the empty follicle, maintains the lining.\nContraception: the pill (oestrogen and progesterone) stops FSH release so eggs do not mature; barrier methods such as condoms also prevent STIs. IVF (Higher tier) uses FSH and LH to stimulate eggs, which are fertilised in a lab and the embryos placed in the uterus. It is expensive and can be stressful with a low success rate.',
       },
       {
         title: 'Biology only: brain and eye',
@@ -245,7 +245,7 @@ export const BIO: Record<string, Lesson> = {
       },
       {
         title: 'Biology only: plant hormones',
-        text: 'Biology only: Auxin is made in the shoot tip. In a shoot lit from one side, auxin collects on the shaded side, making those cells elongate faster, so the shoot bends towards the light (phototropism).\nIn roots, gravity moves auxin to the lower side but there it inhibits growth, so roots bend down (gravitropism).\nGibberellins end seed dormancy and promote germination and flowering. Ethene controls cell division and ripens fruit.\nUses: rooting powder to make cuttings grow, weedkillers, seedless fruit, and ethene to ripen fruit on the way to shops.',
+        text: 'Biology only: Auxin is made in the shoot tip. In a shoot lit from one side, auxin collects on the shaded side, making those cells elongate faster, so the shoot bends towards the light (phototropism).\nIn roots, gravity moves auxin to the lower side but there it inhibits growth, so roots bend down (gravitropism).\nHigher tier: gibberellins end seed dormancy and promote germination and flowering. Ethene controls cell division and ripens fruit.\nHigher tier uses: rooting powder to make cuttings grow, weedkillers, seedless fruit, and ethene to ripen fruit on the way to shops.',
       },
     ],
     check: [
@@ -276,7 +276,7 @@ export const BIO: Record<string, Lesson> = {
       },
       {
         title: 'Alleles and key terms',
-        text: 'Alleles are different versions of a gene. Genotype is the combination of alleles a person has; phenotype is the characteristic that shows.\nHomozygous: two identical alleles. Heterozygous: two different alleles.\nA dominant allele (capital letter) shows even with only one copy. A recessive allele (lower case) only shows when both are recessive.\nMost characteristics are controlled by several genes, not just one. Gregor Mendel worked this out by crossing pea plants.',
+        text: 'Alleles are different versions of a gene. Genotype is the combination of alleles a person has; phenotype is the characteristic that shows.\nHomozygous: two identical alleles. Heterozygous: two different alleles.\nA dominant allele (capital letter) shows even with only one copy. A recessive allele (lower case) only shows when both are recessive.\nMost characteristics are controlled by several genes, not just one. Biology only: Gregor Mendel worked this out by crossing pea plants.',
       },
       {
         title: 'Punnett squares',
@@ -288,11 +288,11 @@ export const BIO: Record<string, Lesson> = {
       },
       {
         title: 'Variation and natural selection',
-        text: 'Variation within a species is caused by genes, the environment, or both. Mutations are random changes in DNA; most do nothing, a few help or harm and rarely produce a new phenotype.\nCharles Darwin’s theory: individuals differ, those with characteristics that suit the environment are more likely to survive and breed, and pass on their alleles. Over many generations, the allele becomes more common. If two populations become so different they can no longer interbreed, new species form.\nEvidence: fossils (from hard parts, parts replaced by minerals, or preserved in ice, amber or traces); the fossil record is incomplete because many early life forms were soft-bodied or the fossils were destroyed. Rapid evolution is seen in antibiotic-resistant bacteria. Extinction may result from environmental change, new predators, disease or competition.',
+        text: 'Variation within a species is caused by genes, the environment, or both. Mutations are random changes in DNA; most do nothing, a few help or harm and rarely produce a new phenotype.\nBiology only: Charles Darwin’s theory: individuals differ, those with characteristics that suit the environment are more likely to survive and breed, and pass on their alleles. Over many generations, the allele becomes more common. If two populations become so different they can no longer interbreed, new species form.\nEvidence: fossils (from hard parts, parts replaced by minerals, or preserved in ice, amber or traces); the fossil record is incomplete because many early life forms were soft-bodied or the fossils were destroyed. Rapid evolution is seen in antibiotic-resistant bacteria. Extinction may result from environmental change, new predators, disease or competition.',
       },
       {
         title: 'Selective breeding and genetic engineering',
-        text: 'Selective breeding: choose parents with a useful feature, breed them, choose the best offspring, and repeat for many generations. Examples: disease-resistant crops, dogs with a gentle nature, cows with high milk yield. Drawbacks: inbreeding reduces the gene pool and can lead to inherited defects.\nGenetic engineering moves a gene from one organism into another. Biology only: enzymes cut the gene out and the gene is inserted into a vector such as a plasmid or virus, then into the target cell, at an early stage so all cells carry it.\nExamples: bacteria that make human insulin, and crops that resist pests or herbicides. Concerns: effects on wild flowers and insects, and unknown health effects. Biology only: cloning uses cuttings, tissue culture, embryo transplants and adult cell cloning.',
+        text: 'Selective breeding: choose parents with a useful feature, breed them, choose the best offspring, and repeat for many generations. Examples: disease-resistant crops, dogs with a gentle nature, cows with high milk yield. Drawbacks: inbreeding reduces the gene pool and can lead to inherited defects.\nGenetic engineering moves a gene from one organism into another. Higher tier: enzymes cut the gene out and the gene is inserted into a vector such as a plasmid or virus, then into the target cell, at an early stage so all cells carry it.\nExamples: bacteria that make human insulin, and crops that resist pests or herbicides. Concerns: effects on wild flowers and insects, and unknown health effects. Biology only: cloning uses cuttings, tissue culture, embryo transplants and adult cell cloning.',
       },
       {
         title: 'Classification',

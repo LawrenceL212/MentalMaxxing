@@ -22,7 +22,7 @@ export const RS: Record<string, Lesson> = {
       },
       {
         title: 'Divorce and adultery',
-        text: `Adultery means a married person having sex with someone else. Both Christianity and Islam teach that it is wrong, and "You shall not commit adultery" is one of the Ten Commandments (Exodus 20).\nJesus said "what God has joined together, let no one separate" (Mark 10:9). The Catholic Church does not allow divorce and remarriage in church, though it may grant an annulment. The Church of England may allow remarriage after divorce, depending on the priest and circumstances.\nIn Islam divorce is allowed but discouraged. A well-known hadith calls it the most disliked of the permitted things. Couples are encouraged to try reconciliation first.`,
+        text: `Adultery means a married person having sex with someone else. Both Christianity and Islam teach that it is wrong, and "You shall not commit adultery" is one of the Ten Commandments (Exodus 20).\nJesus said "what God has joined together, let no one separate" (Mark 10:9). The Catholic Church does not allow divorce and remarriage in church, though it may grant an annulment. The Church of England may allow remarriage after divorce, depending on the priest and circumstances.\nIn Islam divorce is allowed but discouraged. A saying often attributed to Muhammad calls it the most disliked of the permitted things. Couples are encouraged to try reconciliation first.`,
       },
       {
         title: 'Sex, contraception, cohabitation',
@@ -38,7 +38,7 @@ export const RS: Record<string, Lesson> = {
       },
       {
         title: 'Exam technique here',
-        text: `(a) is a short recall, such as naming the Christian ceremony. (b) asks you to explain, so add a "because".\n(c) needs two developed reasons or two views, each backed by a source of authority such as a Bible verse, a hadith or a Church teaching.\n(d) gives a statement like "Marriage is out of date". Give arguments for and against (AO2), then a judgement that says which is stronger and why.`,
+        text: `(a) is a short recall, such as naming the Christian ceremony. (b) asks you to explain, so add a "because".\n(c) needs two developed reasons or two views, ideally backed by a source of authority such as a Bible verse, a hadith or a Church teaching.\n(d) gives a statement like "Marriage is out of date". Give arguments for and against (AO2), then a judgement that says which is stronger and why.`,
       },
     ],
     check: [
@@ -72,7 +72,7 @@ export const RS: Record<string, Lesson> = {
       },
       {
         title: 'Abortion',
-        text: `Abortion means ending a pregnancy. The Catholic Church opposes it, since life is sacred from conception. Many Protestants oppose it but accept it in hard cases, such as a danger to the mother's life.\nMany Muslims say abortion is wrong, especially after the soul enters the foetus, which a hadith places at 120 days. Most scholars allow it earlier in some cases, such as saving the mother's life.\nHumanists usually support a woman's right to choose, considering quality of life and the rights of the woman.`,
+        text: `Abortion means ending a pregnancy. The Catholic Church opposes it, since life is sacred from conception. Many Protestants oppose it but accept it in hard cases, such as a danger to the mother's life.\nMany Muslims say abortion is wrong, especially after the soul enters the foetus, which many scholars, citing a hadith, place at 120 days. Many scholars allow it earlier in some cases, such as saving the mother's life.\nHumanists usually support a woman's right to choose, considering quality of life and the rights of the woman.`,
       },
       {
         title: 'Euthanasia',
@@ -84,7 +84,7 @@ export const RS: Record<string, Lesson> = {
       },
       {
         title: 'Funerals and exam skills',
-        text: `A Christian funeral includes prayers, hymns and readings, and expresses hope in resurrection. A Muslim funeral involves washing and shrouding the body, a prayer (Janazah), and burial quickly, with the head facing Makkah. Views differ on visiting graves for worship, and some Muslims avoid it.\nA Humanist funeral has no religious content and focuses on the person's life.\nFor (d) questions, such as "Abortion is always wrong", give both sides, include a Humanist view where relevant, and finish with a judgement.`,
+        text: `A Christian funeral includes prayers, hymns and readings, and expresses hope in resurrection. A Muslim funeral involves washing and shrouding the body, a prayer (Janazah), and burial quickly, with the body laid facing Makkah. Views differ on visiting graves for worship, and some Muslims avoid it.\nA Humanist funeral has no religious content and focuses on the person's life.\nFor (d) questions, such as "Abortion is always wrong", give both sides, include a Humanist view where relevant, and finish with a judgement.`,
       },
     ],
     check: [
@@ -119,7 +119,7 @@ export const RS: Record<string, Lesson> = {
       },
       {
         title: 'The death penalty',
-        text: `The UK abolished it in 1969 for murder. Some countries still use it.\nSome Christians say it is wrong because life is sacred and Jesus taught forgiveness; Quakers and the Catholic Church today strongly oppose it. Other Christians point to Old Testament passages like "an eye for an eye" (Exodus 21:24), though many say Jesus replaced this with mercy (Matthew 5:38-39).\nIn Islam some scholars support it for crimes such as murder under shariah, while others say conditions are very strict and forgiveness is better. Humanists usually oppose it because of the risk of wrongful convictions.`,
+        text: `The UK abolished it in 1969 for murder. Some countries still use it.\nSome Christians say it is wrong because life is sacred and Jesus taught forgiveness; Quakers oppose it, and the Catholic Church now teaches against it. Other Christians point to Old Testament passages like "an eye for an eye" (Exodus 21:24), though many say Jesus replaced this with mercy (Matthew 5:38-39).\nIn Islam some scholars support it for crimes such as murder under shariah, while others say conditions are very strict and forgiveness is better. Humanists usually oppose it because of the risk of wrongful convictions.`,
       },
       {
         title: 'Forgiveness',

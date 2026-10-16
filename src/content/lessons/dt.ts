@@ -1,7 +1,7 @@
 import type { Lesson } from './types'
 
 // Edexcel 1DT0. The three areas of national D&T content that every board shares. Paper 1 is 1h45 (50%); the NEA is 50%.
-// About 15% of the marks test maths skills (ratio, scale, percentages, area and volume, tolerances).
+// About 15% of the exam marks are calculation questions (ratio, scale, percentages, area and volume, tolerances).
 export const DT: Record<string, Lesson> = {
   'Core technical principles': {
     keyPoints: [
@@ -58,7 +58,7 @@ export const DT: Record<string, Lesson> = {
     keyPoints: [
       'Choose materials by properties, cost, availability, sustainability and how they will be made; justify each choice.',
       'Forces and stresses (tension, compression, bending, torsion, shear) can be resisted by shaping or reinforcing the material.',
-      'A product has an ecological and social footprint from sourcing to disposal: think of the six Rs.',
+      'A product has an ecological and social footprint from sourcing to disposal: think of the Rs (reduce, reuse, recycle and more).',
       'Scale of production (one-off, batch, mass, continuous) affects cost, quality and the methods used.',
       'Surface treatments protect and improve the look of a material, and the right process depends on the material.',
     ],
@@ -73,7 +73,7 @@ export const DT: Record<string, Lesson> = {
       },
       {
         title: 'Ecological and social footprint',
-        text: `A product's ecological footprint covers resources and energy used, pollution, and waste from extraction to disposal. A life cycle looks at all these stages.\nThe six Rs: rethink, refuse, reduce, reuse, repair, recycle.\nSocial footprint is about people: working conditions, fair pay (Fairtrade) and use of child labour. Carbon footprint is a measure of greenhouse gas emissions. Designers can reduce harm by using fewer parts and recycled materials.`,
+        text: `A product's ecological footprint covers resources and energy used, pollution, and waste from extraction to disposal. A life cycle looks at all these stages.\nThe Rs often used to cut a footprint: rethink, refuse, reduce, reuse, repair, recycle.\nSocial footprint is about people: working conditions, fair pay (Fairtrade) and use of child labour. Carbon footprint is a measure of greenhouse gas emissions. Designers can reduce harm by using fewer parts and recycled materials.`,
       },
       {
         title: 'Sources and origins',
@@ -98,7 +98,7 @@ export const DT: Record<string, Lesson> = {
     ],
     check: [
       { q: 'Name the five types of force on a material.', a: 'Tension, compression, bending, torsion, shear.' },
-      { q: 'What are the six Rs?', a: 'Rethink, refuse, reduce, reuse, repair, recycle.' },
+      { q: 'Name three of the Rs used to reduce a product’s footprint.', a: 'Any three of rethink, refuse, reduce, reuse, repair, recycle.' },
       { q: 'Why might a company choose batch production?', a: 'It makes a set quantity of identical items while staying flexible and avoiding the cost of a full production line.' },
       { q: 'Give a suitable finish for an outdoor wooden bench and explain why.', a: 'Exterior varnish or preservative paint, which protects against moisture and rot.' },
       { q: '1,200 identical items cost £3,000 to make. What is the unit cost?', a: '£3,000 ÷ 1,200 = £2.50.' },
