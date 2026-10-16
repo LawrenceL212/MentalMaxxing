@@ -1,3 +1,4 @@
+import { LESSONS } from '../content/lessons'
 import { NOTES } from '../content/notes'
 import { TOPICS } from '../content/topics'
 
@@ -32,7 +33,7 @@ function profiles(): Profile[] {
     topics.map((topic) => {
       const counts = new Map<string, number>()
       for (const w of tokens(topic)) counts.set(w, (counts.get(w) ?? 0) + 3)
-      for (const w of tokens((NOTES[topic] ?? []).join(' '))) counts.set(w, (counts.get(w) ?? 0) + 1)
+      for (const w of tokens((NOTES[topic] ?? LESSONS[topic]?.keyPoints ?? []).join(' '))) counts.set(w, (counts.get(w) ?? 0) + 1)
       return { subjectId, topic, counts }
     }),
   )
