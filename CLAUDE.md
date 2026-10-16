@@ -14,7 +14,7 @@ GCSE study scheduler (Bournemouth School students). PWA: Vite + React + TypeScri
 - `src/lib/fx/` sounds, haptics, confetti (all respect the sound toggle / reduced motion)
 - `src/lib/missions.ts` picks today's mission
 - `src/ui/` theme tokens and the shared layout
-- `firestore.rules`, `.github/workflows/deploy.yml`, `vite.config.ts` (PWA + base path)
+- `firestore.rules`, `.github/workflows/deploy.yml`, `vite.config.ts` (PWA + base path; also copies the on-device text reader into `dist/ocr/` at build)
 
 ## Keep the maps true
 When you add, move, rename or delete a file, update that folder's CLAUDE.md in the same commit. Keep each map under about 40 lines: one line per file, entry points first.
