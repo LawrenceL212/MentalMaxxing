@@ -1,8 +1,8 @@
 # src/lib/ logic and services (no JSX except hooks)
 - `missions.ts` `todayPlan(state)`, `pickMission`, `dueCards`, `allCards`, `daysUntilExam`. The only place that decides what to study.
 - `detect.ts` `detectTopics(text)` matches pasted text to spec topics using each topic's heading and notes vocabulary (needs 2+ distinctive words); `spreadDates`. Used by Study "Where are you in class?", organiser auto-mark, and auto-tagging new cards. Tested. No AI.
-- `dump.ts` Brain Dump check: compares the student's dump with a topic's points by key words (forgives small slips) and lists what is missing. Tested.
-- `ocr.ts` reads text in a photo on the device (Tesseract, served from our own `/ocr/` files, no AI service).
+- `dump.ts` Brain Dump check: compares the student's dump with a topic's points by key words (forgives small slips) and lists what is missing; points whose numbers differ go to `unsure` for the student to judge. Tested.
+- `ocr.ts` reads text in a photo on the device (Tesseract; reads the photo as taken and again after a lighting clean-up, keeps the surer; served from our own `/ocr/` files, no AI service).
 - `lesson.ts` reads a notes PDF on the device (pdf.js, loaded on demand) and splits it into lesson steps. Tested.
 - `curriculum.ts` `orderedTopics` (student-arranged school order), `schoolOrder` (covered vs coming up), `focusTopic`, `topicToLearn`. Tested.
 - `organiser.ts` turns pasted "term: definition" lines into cards (stable ids). `files.ts` IndexedDB storage for organiser files (device only).

@@ -32,4 +32,9 @@ describe('brain dump check', () => {
   it('suggests a rating', () => {
     expect([0, 30, 55, 75, 95].map(ratingFor)).toEqual([1, 2, 3, 4, 5])
   })
+  it('flags a point whose numbers the dump does not repeat', () => {
+    const r = compareDump('the heart pumps blood at 80 beats', ['The heart pumps blood at 60 to 100 beats per minute'])
+    expect(r.unsure).toHaveLength(1)
+    expect(r.covered).toHaveLength(0)
+  })
 })

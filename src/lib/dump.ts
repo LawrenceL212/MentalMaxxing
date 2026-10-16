@@ -24,23 +24,30 @@ function close(a: string, b: string): boolean {
   return s.slice(i) === l.slice(i + 1)
 }
 
-export interface DumpResult { covered: string[]; missing: string[]; pct: number }
+export interface DumpResult { covered: string[]; missing: string[]; unsure: string[]; pct: number }
 
-/** A point counts as covered when at least half of its key words (and at least one) appear in the dump. */
+/** Numbers in a point ("90", "0.5") are facts a student can get wrong while using the right words. */
+const numbersIn = (p: string): string[] => p.match(/\d+(?:\.\d+)?/g) ?? []
+
+/** A point counts as covered when at least half of its key words (and at least one) appear in the dump. If the point holds numbers the dump does not repeat, it goes to `unsure` so the student can judge whether their version says the same. */
 export function compareDump(dump: string, points: string[]): DumpResult {
   const have = words(dump).map(stem)
   const covered: string[] = []
   const missing: string[] = []
+  const unsure: string[] = []
+  const dumpNums = new Set(numbersIn(dump))
   for (const p of points) {
     // "term: definition" lines (organisers): the term itself is what the student needs to recall.
     const head = p.match(/^(.{2,60}?)\s*(?::|\s[-–—=]\s|\t)/)?.[1]
     const keys = keyWords(head ?? p)
     const hit = keys.filter((k) => have.some((h) => close(h, k))).length
-    if (keys.length > 0 && hit >= Math.max(1, Math.ceil(keys.length / 2))) covered.push(p)
-    else missing.push(p)
+    if (keys.length > 0 && hit >= Math.max(1, Math.ceil(keys.length / 2))) {
+      if (numbersIn(head ?? p).every((n) => dumpNums.has(n))) covered.push(p)
+      else unsure.push(p)
+    } else missing.push(p)
   }
   const total = points.length
-  return { covered, missing, pct: total ? Math.round((covered.length / total) * 100) : 0 }
+  return { covered, missing, unsure, pct: total ? Math.round((covered.length / total) * 100) : 0 }
 }
 
 /** 1 to 5 rating suggested by how much of the topic was recalled. */

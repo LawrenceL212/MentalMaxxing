@@ -35,6 +35,7 @@ export default function MissionRun() {
   const [dumpText, setDumpText] = useState('')
   const [result, setResult] = useState<DumpResult | null>(null)
   const [reading, setReading] = useState<number | null>(null)
+  const [verdict, setVerdict] = useState<Record<string, boolean>>({})
   const [photoMsg, setPhotoMsg] = useState('')
   const [photo, setPhoto] = useState('')
   const tick = useRef<ReturnType<typeof setInterval>>(undefined)
@@ -93,8 +94,24 @@ export default function MissionRun() {
   function check() {
     const r = compareDump(dumpText, checkAgainst)
     setResult(r)
+    setVerdict({})
     setRating(ratingFor(r.pct))
     sfx(r.missing.length ? 'tap' : 'complete')
+  }
+
+  /** The app's guess, overruled by the student's own call on each point (they can judge ideas; the app only sees words). */
+  const had = (p: string, guess: boolean) => verdict[p] ?? guess
+  const final = result && {
+    covered: [...result.covered.filter((p) => had(p, true)), ...[...result.unsure, ...result.missing].filter((p) => had(p, false))],
+    missing: [...result.missing.filter((p) => !had(p, false)), ...result.covered.filter((p) => !had(p, true))],
+    unsure: result.unsure.filter((p) => verdict[p] === undefined),
+  }
+  function decide(p: string, ok: boolean) {
+    const next = { ...verdict, [p]: ok }
+    setVerdict(next)
+    if (!result) return
+    const n = checkAgainst.filter((q) => (next[q] ?? result.covered.includes(q))).length
+    setRating(ratingFor(checkAgainst.length ? Math.round((n / checkAgainst.length) * 100) : 0))
   }
 
   if (phase === 'done') {
@@ -163,7 +180,7 @@ export default function MissionRun() {
           {k === 'dump' && checkAgainst.length > 0 && (
             <div className="grid gap-3 rounded-2xl bg-[var(--raise2)] p-3">
               <h2 className="label">What did you miss?</h2>
-              <p className="text-sm">Take a photo of your brain dump on {dumpAbout}, or type it. The app reads the words and compares them with the {org?.text.trim() ? 'points in your knowledge organiser' : 'key points for this topic'}. It matches words only, so it cannot tell if an idea is right.</p>
+              <p className="text-sm">Take a photo of your brain dump on {dumpAbout}, or type it. The app reads the words and compares them with the {org?.text.trim() ? 'points in your knowledge organiser' : 'key points for this topic'}. It matches words, so it may be wrong about an idea: you have the final say on every point.</p>
               <label className="btn btn-ghost cursor-pointer">
                 <Icon name="plus" size={18} />{reading !== null ? `Reading... ${Math.round(reading * 100)}%` : photo ? 'Use a different photo' : 'Add a photo of your dump'}
                 <input type="file" accept="image/*" capture="environment" className="sr-only" disabled={reading !== null} onChange={(e) => { void onPhoto(e.target.files?.[0]); e.target.value = '' }} />
@@ -172,16 +189,28 @@ export default function MissionRun() {
               {photoMsg && <p role="status" className="text-sm font-bold">{photoMsg}</p>}
               <textarea className="field min-h-28" aria-label="Your brain dump as text" placeholder="Or type what you wrote" value={dumpText} onChange={(e) => { setDumpText(e.target.value); setResult(null) }} />
               <button type="button" className="btn btn-light" disabled={dumpText.trim().length < 5} onClick={check}>Check what is missing</button>
-              {result && (
+              {result && final && (
                 <div className="grid gap-2" aria-live="polite">
-                  <p className="mono text-sm font-bold">You covered {result.covered.length} of {checkAgainst.length} points ({result.pct}%)</p>
-                  {result.missing.length > 0 ? (
+                  <p className="mono text-sm font-bold">You covered {final.covered.length} of {checkAgainst.length} points ({Math.round((final.covered.length / checkAgainst.length) * 100)}%)</p>
+                  {final.unsure.length > 0 && (
+                    <>
+                      <h3 className="label">Check these: your words match but the numbers differ</h3>
+                      <ul className="grid max-h-64 gap-1.5 overflow-auto text-sm">{final.unsure.map((l) => (
+                        <li key={l} className="grid gap-1.5 rounded-lg bg-[var(--raise)] p-2 leading-snug">{l}
+                          <span className="flex gap-2"><button type="button" className="btn btn-ghost !px-3 !py-1" onClick={() => decide(l, true)}>Mine says the same</button><button type="button" className="btn btn-ghost !px-3 !py-1" onClick={() => decide(l, false)}>Mine was wrong</button></span>
+                        </li>))}</ul>
+                    </>
+                  )}
+                  {final.missing.length > 0 ? (
                     <>
                       <h3 className="label">Missing: add these in a different colour</h3>
-                      <ul className="grid max-h-64 gap-1.5 overflow-auto text-sm">{result.missing.map((l, i) => <li key={i} className="rounded-lg bg-[var(--raise)] p-2 leading-snug">{l}</li>)}</ul>
+                      <ul className="grid max-h-64 gap-1.5 overflow-auto text-sm">{final.missing.map((l) => (
+                        <li key={l} className="grid gap-1.5 rounded-lg bg-[var(--raise)] p-2 leading-snug">{l}
+                          <button type="button" className="btn btn-ghost !px-3 !py-1 justify-self-start" onClick={() => decide(l, true)}>I did write this</button>
+                        </li>))}</ul>
                     </>
-                  ) : <p className="font-bold">Nothing missing. Nice.</p>}
-                  {result.covered.length > 0 && <details><summary className="cursor-pointer text-sm font-bold">What you covered ({result.covered.length})</summary><ul className="mt-1 grid gap-1 text-sm">{result.covered.map((l, i) => <li key={i}>✓ {l}</li>)}</ul></details>}
+                  ) : final.unsure.length === 0 && <p className="font-bold">Nothing missing. Nice.</p>}
+                  {final.covered.length > 0 && <details><summary className="cursor-pointer text-sm font-bold">What you covered ({final.covered.length})</summary><ul className="mt-1 grid gap-1 text-sm">{final.covered.map((l) => <li key={l} className="flex items-start justify-between gap-2">✓ {l}<button type="button" className="underline" onClick={() => decide(l, false)}>Not quite</button></li>)}</ul></details>}
                   <p className="text-sm">Rating set to {rating}/5 from this. Change it below if that is wrong.</p>
                 </div>
               )}
