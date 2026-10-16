@@ -9,6 +9,7 @@ import { orderedTopics, topicId } from '../../lib/curriculum'
 import { organiserCardId, parseOrganiser } from '../../lib/organiser'
 import { detectTopics, spreadDates, type TopicMatch } from '../../lib/detect'
 import { deleteFile, getFile, MAX_FILE_BYTES, putFile } from '../../lib/files'
+import { extractPdfText, splitLesson } from '../../lib/lesson'
 import Icon from '../../ui/Icon'
 
 const shuffle = <T,>(a: T[]) => [...a].sort(() => Math.random() - 0.5)
@@ -114,6 +115,36 @@ function TopicPage({ subjectId, deck: opened, onClose, onSwitch }: { subjectId: 
     }
   }
 
+  const lessonKey = `lesson:${key}`
+  const [lesson, setLesson] = useState<string[]>([])
+  const [step, setStep] = useState(0)
+  const [reading, setReading] = useState(false)
+  useEffect(() => {
+    let live = true
+    setStep(0)
+    getFile(lessonKey).then((f) => f?.text()).then((txt) => { if (live) setLesson(txt ? splitLesson(txt) : []) }).catch(() => { if (live) setLesson([]) })
+    return () => { live = false }
+  }, [lessonKey])
+
+  async function onLesson(f: File | undefined) {
+    if (!f) return
+    if (f.size > MAX_FILE_BYTES) return setMsg('That PDF is over 15 MB.')
+    setReading(true)
+    try {
+      const text = await extractPdfText(f)
+      if (text.length < 40) return setMsg('Could not read any text in that PDF (it may be scanned images). Paste the text into the organiser box instead.')
+      await putFile(lessonKey, new File([text], 'lesson.txt', { type: 'text/plain' }))
+      setLesson(splitLesson(text))
+      setStep(0)
+      sfx('complete')
+      setMsg('Lesson ready. It stays on this device.')
+    } catch {
+      setMsg('Could not read that PDF here. Paste the text into the organiser box instead.')
+    } finally {
+      setReading(false)
+    }
+  }
+
   function makeCards() {
     const n = actions.addCards(parsed.map((p) => ({ id: organiserCardId(subjectId, topicKey, p.front), subjectId, topic: deck.topic, front: p.front, back: p.back })))
     sfx('complete')
@@ -188,6 +219,31 @@ function TopicPage({ subjectId, deck: opened, onClose, onSwitch }: { subjectId: 
           </section>
         </div>
       </div>
+      <section className="surface rise grid content-start gap-3 p-5">
+        <h2 className="label">Learn from your notes</h2>
+        {lesson.length === 0 ? (
+          <p className="text-sm">Have a notes PDF for this topic (from your teacher or a revision site)? Import it and the app reads it on this device and teaches it here, a step at a time. Nothing is uploaded.</p>
+        ) : (
+          <div className="grid gap-3" aria-live="polite">
+            <div className="mono flex items-center justify-between text-xs font-bold"><span>Step {step + 1} of {lesson.length}</span><span>{Math.round(((step + 1) / lesson.length) * 100)}%</span></div>
+            <div className="h-2 overflow-hidden rounded-full bg-[var(--raise2)]"><div className="h-full rounded-full" style={{ width: `${((step + 1) / lesson.length) * 100}%`, background: color }} /></div>
+            <p className="whitespace-pre-wrap text-[17px] leading-snug">{lesson[step]}</p>
+            <div className="grid grid-cols-2 gap-2">
+              <button type="button" className="btn btn-ghost" disabled={step === 0} onClick={() => { sfx('tap'); setStep((s) => s - 1) }}>Back</button>
+              {step < lesson.length - 1
+                ? <button type="button" className="btn btn-primary" onClick={() => { sfx('select'); setStep((s) => s + 1) }}>Next</button>
+                : <button type="button" className="btn btn-primary" onClick={() => { sfx('complete'); rate(2); setFlipping(true) }}>Test yourself</button>}
+            </div>
+          </div>
+        )}
+        <div className="flex flex-wrap items-center gap-3">
+          <label className="btn btn-ghost cursor-pointer">
+            <Icon name="plus" size={18} />{reading ? 'Reading...' : lesson.length ? 'Replace notes PDF' : 'Import notes PDF'}
+            <input type="file" accept="application/pdf" className="sr-only" disabled={reading} onChange={(e) => { void onLesson(e.target.files?.[0]); e.target.value = '' }} />
+          </label>
+          {lesson.length > 0 && <button type="button" className="text-sm font-bold underline" onClick={() => { void deleteFile(lessonKey); setLesson([]); setMsg('Lesson removed.') }}>Remove</button>}
+        </div>
+      </section>
       <section className="surface rise grid content-start gap-3 p-5">
         <h2 className="label">My knowledge organiser</h2>
         <p className="text-sm">Add the one your teacher gave you. Paste the text, add a link, or upload a photo or PDF (kept on this device). Put each fact on its own line like <b>Mitochondria: where aerobic respiration happens</b> and the app turns them into flashcards.</p>
