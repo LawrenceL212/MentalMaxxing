@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { actions, useAppState } from '../../lib/store'
 import { NOTES } from '../../content/notes'
+import { LESSONS } from '../../content/lessons'
 import { decksFor, type Deck } from '../../lib/flashcards'
 import { subjectById } from '../../content/subjects'
 import { sfx } from '../../lib/fx/sound'
@@ -78,7 +79,8 @@ function TopicPage({ subjectId, deck: opened, onClose, onSwitch }: { subjectId: 
   const subject = subjectById(subjectId)
   const color = subject?.color ?? 'var(--accent)'
   const key = `${subjectId}:${deck.topic}`
-  const notes = NOTES[deck.topic] ?? []
+  const built = LESSONS[deck.topic]
+  const notes = NOTES[deck.topic] ?? built?.keyPoints ?? []
   const [flipping, setFlipping] = useState(false)
   const [msg, setMsg] = useState('')
   const [fileUrl, setFileUrl] = useState('')
@@ -115,6 +117,9 @@ function TopicPage({ subjectId, deck: opened, onClose, onSwitch }: { subjectId: 
     }
   }
 
+  const [lessonOpen, setLessonOpen] = useState(false)
+  const [lessonStep, setLessonStep] = useState(0)
+  useEffect(() => { setLessonOpen(false); setLessonStep(0) }, [deck.topic])
   const lessonKey = `lesson:${key}`
   const [lesson, setLesson] = useState<string[]>([])
   const [step, setStep] = useState(0)
@@ -219,6 +224,44 @@ function TopicPage({ subjectId, deck: opened, onClose, onSwitch }: { subjectId: 
           </section>
         </div>
       </div>
+      {built && (
+        <section className="surface rise grid content-start gap-3 p-5" aria-label="Lesson">
+          <h2 className="label">Lesson</h2>
+          {!lessonOpen ? (
+            <>
+              <p className="text-sm">{built.steps.length} short steps, then {built.check.length} questions to check you got it. Written for this app and based on the exam board's specification.</p>
+              <button type="button" className="btn btn-primary" onClick={() => { sfx('select'); setLessonStep(0); setLessonOpen(true) }}>Start the lesson</button>
+            </>
+          ) : (
+            <div className="grid gap-3" aria-live="polite">
+              <div className="mono flex items-center justify-between text-xs font-bold"><span>{lessonStep < built.steps.length ? `Step ${lessonStep + 1} of ${built.steps.length}` : 'Check yourself'}</span><span>{Math.round((Math.min(lessonStep + 1, built.steps.length + 1) / (built.steps.length + 1)) * 100)}%</span></div>
+              <div className="h-2 overflow-hidden rounded-full bg-[var(--raise2)]"><div className="h-full rounded-full" style={{ width: `${(Math.min(lessonStep + 1, built.steps.length + 1) / (built.steps.length + 1)) * 100}%`, background: color }} /></div>
+              {lessonStep < built.steps.length ? (
+                <div className="grid gap-1.5">
+                  <h3 className="text-xl font-extrabold">{built.steps[lessonStep].title}</h3>
+                  <p className="whitespace-pre-wrap text-[17px] leading-snug">{built.steps[lessonStep].text}</p>
+                </div>
+              ) : (
+                <div className="grid gap-2">
+                  <p className="text-sm">Answer each on paper first, then reveal.</p>
+                  {built.check.map((c, i) => (
+                    <details key={i} className="rounded-xl bg-[var(--raise2)] p-3">
+                      <summary className="cursor-pointer font-bold">{i + 1}. {c.q}</summary>
+                      <p className="mt-2 whitespace-pre-wrap">{c.a}</p>
+                    </details>
+                  ))}
+                </div>
+              )}
+              <div className="grid grid-cols-2 gap-2">
+                <button type="button" className="btn btn-ghost" disabled={lessonStep === 0} onClick={() => { sfx('tap'); setLessonStep((s) => s - 1) }}>Back</button>
+                {lessonStep < built.steps.length
+                  ? <button type="button" className="btn btn-primary" onClick={() => { sfx('select'); setLessonStep((s) => s + 1) }}>{lessonStep === built.steps.length - 1 ? 'Check yourself' : 'Next'}</button>
+                  : <button type="button" className="btn btn-primary" onClick={() => { sfx('complete'); if (!state.topicKnow[key]) rate(2); setFlipping(true) }}>Flip flashcards</button>}
+              </div>
+            </div>
+          )}
+        </section>
+      )}
       <section className="surface rise grid content-start gap-3 p-5">
         <h2 className="label">Learn from your notes</h2>
         {lesson.length === 0 ? (
