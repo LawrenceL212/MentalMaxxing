@@ -12,7 +12,7 @@ import {
 } from 'firebase/auth'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { firebaseConfigured, getFirebase } from './index'
-import { actions, getState, subscribe, type AppState } from '../store'
+import { DEFAULT_STATE, actions, getState, subscribe, type AppState } from '../store'
 
 /**
  * loading: waiting to learn if someone is signed in. signedOut: show the sign-in screen.
@@ -29,6 +29,30 @@ const readGuest = () => {
   }
 }
 
+/** Whose data is in localStorage. Stops one student's progress being mixed into another's account on a shared device. */
+const OWNER_KEY = 'mentalmaxxing:owner'
+const readOwner = () => {
+  try {
+    return localStorage.getItem(OWNER_KEY)
+  } catch {
+    return null
+  }
+}
+const writeOwner = (uid: string | null) => {
+  try {
+    if (uid) localStorage.setItem(OWNER_KEY, uid)
+    else localStorage.removeItem(OWNER_KEY)
+  } catch {
+    /* ignore */
+  }
+}
+const resetLocal = () => {
+  applyingRemote = true
+  actions.replace({ ...DEFAULT_STATE })
+  applyingRemote = false
+}
+
+let applyingRemote = false
 let status: AuthStatus = firebaseConfigured ? 'loading' : 'ready'
 let guest = readGuest()
 const listeners = new Set<() => void>()
@@ -57,13 +81,15 @@ export function continueAsGuest() {
 }
 
 let started = false
-let applyingRemote = false
 
 /** One document per signed-in student: users/{uid}. Newest updatedAt wins. */
 async function reconcile(user: User) {
   const fb = getFirebase()
   if (!fb) return
   const ref = doc(fb.db, 'users', user.uid)
+  // Local data left by a different student is never uploaded into this account.
+  const owner = readOwner()
+  if (owner && owner !== user.uid) resetLocal()
   const snap = await getDoc(ref)
   const remote = snap.exists() ? (snap.data() as AppState) : null
   const local = getState()
@@ -74,6 +100,7 @@ async function reconcile(user: User) {
   } else {
     await setDoc(ref, local)
   }
+  writeOwner(user.uid)
 }
 
 /** Call once at startup. Watches sign-in and keeps the cloud copy in step with this device. */
@@ -84,7 +111,7 @@ export function startSync() {
 
   let timer: ReturnType<typeof setTimeout> | undefined
   subscribe(() => {
-    if (applyingRemote || !fb.auth.currentUser) return
+    if (applyingRemote || !fb.auth.currentUser || readOwner() !== fb.auth.currentUser.uid) return
     clearTimeout(timer)
     timer = setTimeout(() => {
       const user = fb.auth.currentUser
@@ -169,7 +196,14 @@ export function useAuth() {
       }
     },
     signOut: async () => {
-      if (fb?.auth.currentUser) await signOut(fb.auth)
+      const user = fb?.auth.currentUser
+      if (fb && user) {
+        // Save any change still waiting, then clear this device so the next student starts clean.
+        if (readOwner() === user.uid) await setDoc(doc(fb.db, 'users', user.uid), getState()).catch(() => undefined)
+        await signOut(fb.auth)
+        resetLocal()
+        writeOwner(null)
+      }
       guest = false
       try {
         localStorage.removeItem(GUEST_KEY)
